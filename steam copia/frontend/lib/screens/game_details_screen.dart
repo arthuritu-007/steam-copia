@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/api/api_client.dart';
+import 'package:provider/provider.dart';
 import 'package:frontend/api/models.dart';
 import 'package:frontend/api/repository_provider.dart';
+import 'package:frontend/api/cart_provider.dart';
+import 'package:frontend/api/auth_provider.dart';
+import 'package:frontend/screens/login_screen.dart';
 
 class GameDetailsScreen extends StatefulWidget {
   final String slug;
@@ -17,9 +20,7 @@ class GameDetailsScreen extends StatefulWidget {
 }
 
 class _GameDetailsScreenState extends State<GameDetailsScreen> {
-  final _api = ApiClient();
   Future<GameDetails>? _future;
-  bool _buying = false;
 
   @override
   void initState() {
@@ -27,37 +28,11 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
     _future = RepositoryProvider.games.getGameDetails(widget.slug);
   }
 
-  Future<void> _buy() async {
-    setState(() => _buying = true);
-    try {
-      if (RepositoryProvider.mode == RepositoryMode.api) {
-        await _api.purchase([widget.gameId]);
-      } else {
-        await Future.delayed(const Duration(seconds: 1));
-      }
-      
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(
-        content: Text('¡Compra realizada con éxito!'),
-        backgroundColor: Colors.green,
-      ));
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(
-        content: Text(e.toString()),
-        backgroundColor: Colors.redAccent,
-      ));
-    } finally {
-      if (mounted) setState(() => _buying = false);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final auth = context.watch<AuthProvider>();
+    final cart = context.watch<CartProvider>();
+
     return Scaffold(
       backgroundColor: const Color(0xFF171A21),
       appBar: AppBar(
@@ -75,31 +50,24 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
           }
           final g = snapshot.data!;
           bool isFree = g.priceCents == 0;
+          bool isOwned = cart.isOwned(g.id);
+          bool isInCart = cart.items.any((item) => item.id == g.id);
 
           return ListView(
             padding: const EdgeInsets.all(0),
             children: [
-              if (g.headerImageUrl != null)
-                AspectRatio(
-                  aspectRatio: 16 / 9,
-                  child: Image.network(
-                    g.headerImageUrl!,
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      color: Colors.black26,
-                      child: const Icon(Icons.broken_image, size: 100, color: Colors.white24),
+              AspectRatio(
+                aspectRatio: 16 / 9,
+                child: Container(
+                  color: Colors.black.withOpacity(0.5),
+                  child: Center(
+                    child: Text(
+                      g.title,
+                      style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white24),
                     ),
                   ),
-                )
-              else
-                AspectRatio(
-                  aspectRatio: 16 / 9,
-                  child: Container(
-                    color: Colors.black26,
-                    child: const Icon(Icons.gamepad, size: 100, color: Colors.white24),
-                  ),
                 ),
+              ),
               
               Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -135,18 +103,67 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
                               ),
                             ],
                           ),
-                          ElevatedButton(
-                            onPressed: _buying ? null : _buy,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF2A475E),
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                          if (isOwned)
+                            ElevatedButton.icon(
+                              onPressed: null,
+                              icon: const Icon(Icons.check),
+                              label: const Text('EN LA BIBLIOTECA'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green.withOpacity(0.2),
+                                foregroundColor: Colors.green,
+                              ),
+                            )
+                          else if (!auth.isLoggedIn)
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => LoginScreen(onLoggedIn: () {
+                                      Navigator.pop(context);
+                                      auth.login('Usuario');
+                                    }),
+                                  ),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF66C0F4),
+                                foregroundColor: Colors.black,
+                              ),
+                              child: const Text('INICIA SESIÓN PARA COMPRAR'),
+                            )
+                          else if (isInCart)
+                            ElevatedButton.icon(
+                              onPressed: () => cart.removeItem(g.id),
+                              icon: const Icon(Icons.shopping_cart),
+                              label: const Text('EN EL CARRITO (QUITAR)'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.orange.withOpacity(0.2),
+                                foregroundColor: Colors.orange,
+                              ),
+                            )
+                          else
+                            ElevatedButton(
+                              onPressed: () {
+                                cart.addItem(GameSummary(
+                                  id: g.id,
+                                  slug: g.slug,
+                                  title: g.title,
+                                  shortDescription: g.shortDescription,
+                                  priceCents: g.priceCents,
+                                  currency: g.currency,
+                                  releaseDate: g.releaseDate,
+                                  headerImageUrl: g.headerImageUrl,
+                                ));
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Añadido al carrito')),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF66C0F4),
+                                foregroundColor: Colors.black,
+                              ),
+                              child: Text(isFree ? 'AÑADIR A LA BIBLIOTECA' : 'AÑADIR AL CARRITO'),
                             ),
-                            child: _buying
-                                ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                                : Text(isFree ? 'OBTENER' : 'COMPRAR'),
-                          ),
                         ],
                       ),
                     ),

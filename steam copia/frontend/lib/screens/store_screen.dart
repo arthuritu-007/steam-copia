@@ -13,6 +13,7 @@ class StoreScreen extends StatefulWidget {
 class _StoreScreenState extends State<StoreScreen> {
   final _search = TextEditingController();
   Future<List<GameSummary>>? _future;
+  String _activeTab = 'Destacados';
 
   @override
   void initState() {
@@ -36,54 +37,13 @@ class _StoreScreenState extends State<StoreScreen> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Repository Selector (Debug/Development tool)
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-          color: Colors.black26,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                'Modo:',
-                style: TextStyle(fontSize: 10, color: Colors.grey),
-              ),
-              const SizedBox(width: 8),
-              SegmentedButton<RepositoryMode>(
-                showSelectedIcon: false,
-                style: SegmentedButton.styleFrom(
-                  visualDensity: VisualDensity.compact,
-                  padding: EdgeInsets.zero,
-                  textStyle: const TextStyle(fontSize: 10),
-                ),
-                segments: const [
-                  ButtonSegment(value: RepositoryMode.api, label: Text('API')),
-                  ButtonSegment(
-                    value: RepositoryMode.hardcode,
-                    label: Text('Hardcode'),
-                  ),
-                  ButtonSegment(
-                    value: RepositoryMode.arraylist,
-                    label: Text('ArrayList'),
-                  ),
-                ],
-                selected: {RepositoryProvider.mode},
-                onSelectionChanged: (Set<RepositoryMode> newSelection) {
-                  setState(() {
-                    RepositoryProvider.setMode(newSelection.first);
-                    _reload();
-                  });
-                },
-              ),
-            ],
-          ),
-        ),
         Expanded(
           child: RefreshIndicator(
             onRefresh: () async => _reload(),
             child: ListView(
               children: [
                 _buildBanner(),
-                _buildCategories(),
+                _buildTabs(),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: FutureBuilder<List<GameSummary>>(
@@ -95,39 +55,43 @@ class _StoreScreenState extends State<StoreScreen> {
                       if (snapshot.hasError) {
                         return Center(child: Text(snapshot.error.toString()));
                       }
-                      final games = snapshot.data ?? [];
+                      
+                      var games = snapshot.data ?? [];
+                      
+                      // Filter by tab
+                      if (_activeTab == 'Nuevos') {
+                        games = games.where((g) => g.isNew).toList();
+                      } else if (_activeTab == 'Más vendidos') {
+                        games = games.where((g) => g.isTopSeller).toList();
+                      } else if (_activeTab == 'Gratis') {
+                        games = games.where((g) => g.priceCents == 0).toList();
+                      } else {
+                        // Destacados
+                        games = games.where((g) => g.isFeatured).toList();
+                      }
+
                       if (games.isEmpty) {
                         return const Center(
-                          child: Text('No hay juegos publicados'),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 40),
+                            child: Text('No hay juegos en esta categoría'),
+                          ),
                         );
                       }
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Todos los juegos',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF66C0F4),
+                      
+                      return GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 4,
+                              childAspectRatio: 0.75,
+                              crossAxisSpacing: 16,
+                              mainAxisSpacing: 16,
                             ),
-                          ),
-                          const SizedBox(height: 16),
-                          GridView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2,
-                                  childAspectRatio: 0.8,
-                                  crossAxisSpacing: 12,
-                                  mainAxisSpacing: 12,
-                                ),
-                            itemCount: games.length,
-                            itemBuilder: (context, index) =>
-                                _buildGameCard(games[index]),
-                          ),
-                        ],
+                        itemCount: games.length,
+                        itemBuilder: (context, index) =>
+                            _buildGameCard(games[index]),
                       );
                     },
                   ),
@@ -143,46 +107,35 @@ class _StoreScreenState extends State<StoreScreen> {
   Widget _buildBanner() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 20),
+      padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
       decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: NetworkImage(
-            'https://cdn.akamai.steamstatic.com/steam/apps/1091500/ss_f86f7f3f1e9c90a1845a76c024564c70d47d4885.1920x1080.jpg',
-          ),
-          fit: BoxFit.cover,
-          colorFilter: ColorFilter.mode(Colors.black54, BlendMode.darken),
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color(0xFF1B2838),
+            Color(0xFF171A21),
+          ],
         ),
       ),
-      child: Column(
+      child: const Column(
         children: [
-          const Text(
-            'Bienvenido a SteamClon',
+          Text(
+            'STEAMCLON',
             style: TextStyle(
-              fontSize: 28,
+              fontSize: 32,
               fontWeight: FontWeight.bold,
               color: Colors.white,
+              letterSpacing: 2,
             ),
           ),
-          const SizedBox(height: 8),
-          const Text(
-            'Tu tienda de videojuegos favorita. Miles de títulos, un solo lugar.',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.white70, fontSize: 14),
-          ),
-          const SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: () {},
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF66C0F4).withOpacity(0.8),
-              foregroundColor: Colors.black,
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(4),
-              ),
-            ),
-            child: const Text(
-              'Ver catálogo completo',
-              style: TextStyle(fontWeight: FontWeight.bold),
+          SizedBox(height: 8),
+          Text(
+            'CATÁLOGO',
+            style: TextStyle(
+              color: Color(0xFF66C0F4),
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],
@@ -190,171 +143,175 @@ class _StoreScreenState extends State<StoreScreen> {
     );
   }
 
-  Widget _buildCategories() {
-    final categories = ['Destacados', 'Nuevos', 'Más vendidos', 'Gratis'];
+  Widget _buildTabs() {
+    final tabs = ['Destacados', 'Nuevos', 'Más vendidos', 'Gratis'];
     return Container(
-      height: 45,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: const BoxDecoration(
         color: Color(0xFF171A21),
         border: Border(bottom: BorderSide(color: Colors.white10)),
       ),
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        itemCount: categories.length,
-        itemBuilder: (context, index) {
-          bool isSelected = index == 0;
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 8),
-            child: TextButton(
-              onPressed: () {},
-              style: TextButton.styleFrom(
-                foregroundColor: isSelected ? Colors.white : Colors.white38,
-                backgroundColor: isSelected
-                    ? Colors.white.withOpacity(0.05)
-                    : null,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(2),
-                ),
+      child: Row(
+        children: tabs.map((tab) {
+          final isActive = _activeTab == tab;
+          return InkWell(
+            onTap: () {
+              setState(() {
+                _activeTab = tab;
+              });
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: isActive ? Colors.white.withOpacity(0.1) : Colors.transparent,
+                borderRadius: BorderRadius.circular(4),
               ),
               child: Text(
-                categories[index],
+                tab,
                 style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  color: isActive ? Colors.white : Colors.white54,
+                  fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
                 ),
               ),
             ),
           );
-        },
+        }).toList(),
       ),
     );
   }
 
   Widget _buildGameCard(GameSummary game) {
-    bool isFree = game.priceCents == 0;
-    return Card(
-      color: const Color(0xFF1B2838),
-      clipBehavior: Clip.antiAlias,
-      elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-      child: InkWell(
-        onTap: () => Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => GameDetailsScreen(slug: game.slug, gameId: game.id),
+    final isFree = game.priceCents == 0;
+    
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFF1B2838),
+        borderRadius: BorderRadius.circular(4),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
           ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            AspectRatio(
-              aspectRatio: 1, // Change to 1:1 square ratio for vertical look
-              child: Container(
-                width: double.infinity,
-                decoration: const BoxDecoration(color: Colors.black26),
-                child: game.headerImageUrl != null
-                    ? Image.network(
-                        game.headerImageUrl!,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) =>
-                            const Center(
-                              child: Icon(
-                                Icons.broken_image,
-                                color: Colors.white24,
-                              ),
-                            ),
-                      )
-                    : const Icon(
-                        Icons.gamepad,
-                        size: 50,
-                        color: Colors.white24,
-                      ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.5),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+              ),
+              child: Center(
+                child: Text(
+                  game.title,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    game.title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 13,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  game.title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    ...List.generate(5, (index) {
+                      return Icon(
+                        index < game.rating.floor() 
+                          ? Icons.star 
+                          : (index < game.rating ? Icons.star_half : Icons.star_border),
+                        color: Colors.orange,
+                        size: 12,
+                      );
+                    }),
+                    const SizedBox(width: 4),
+                    Text(
+                      game.rating.toString(),
+                      style: const TextStyle(color: Colors.white54, fontSize: 10),
                     ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    game.shortDescription,
-                    style: const TextStyle(color: Colors.white38, fontSize: 10),
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    if (isFree)
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 4,
-                          vertical: 2,
-                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: Colors.black45,
+                          color: Colors.green,
                           borderRadius: BorderRadius.circular(2),
                         ),
-                        child: Text(
-                          isFree
-                              ? 'GRATIS'
-                              : '\$${(game.priceCents / 100).toStringAsFixed(2)}',
+                        child: const Text(
+                          'GRATIS',
                           style: TextStyle(
-                            color: isFree
-                                ? Colors.lightGreenAccent
-                                : const Color(0xFF66C0F4),
+                            color: Colors.white,
+                            fontSize: 10,
                             fontWeight: FontWeight.bold,
-                            fontSize: 11,
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 34,
-                    child: OutlinedButton(
-                      onPressed: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => GameDetailsScreen(
-                            slug: game.slug,
-                            gameId: game.id,
-                          ),
-                        ),
-                      ),
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Colors.white12),
-                        backgroundColor: Colors.white.withOpacity(0.05),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        padding: EdgeInsets.zero,
-                      ),
-                      child: Text(
-                        isFree ? 'Jugar ahora' : 'Ver en tienda',
+                      )
+                    else
+                      Text(
+                        '\$${(game.priceCents / 100).toStringAsFixed(2)}',
                         style: const TextStyle(
-                          fontSize: 11,
-                          color: Colors.white,
+                          color: Color(0xFF66C0F4),
                           fontWeight: FontWeight.bold,
                         ),
                       ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => GameDetailsScreen(slug: game.slug, gameId: game.id),
+                        ),
+                      );
+                    },
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      side: const BorderSide(color: Colors.white24),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                    child: Text(
+                      isFree ? 'Jugar ahora' : 'Ver detalle',
+                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:frontend/api/cart_provider.dart';
+import 'package:frontend/api/auth_provider.dart';
 import 'package:frontend/api/models.dart';
+import 'package:frontend/screens/login_screen.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -10,12 +13,10 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-  final CartProvider _cart = CartProvider(); // Using local instance for simplicity if no provider pkg
-
   @override
   Widget build(BuildContext context) {
-    // In a real app with provider, we would use context.watch<CartProvider>()
-    // For now, let's use a simple approach to show the UI based on your capture
+    final cart = context.watch<CartProvider>();
+    final auth = context.watch<AuthProvider>();
     
     return Scaffold(
       backgroundColor: const Color(0xFF171A21),
@@ -38,23 +39,31 @@ class _CartScreenState extends State<CartScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                _buildCartItem('Cyberpunk 2077', 'RPG', 29.99, 'https://cdn.akamai.steamstatic.com/steam/apps/1091500/header.jpg'),
-                _buildCartItem('Elden Ring', 'Action RPG', 49.99, 'https://cdn.akamai.steamstatic.com/steam/apps/1245620/header.jpg'),
+                if (cart.items.isEmpty)
+                  const Center(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 40),
+                      child: Text('Tu carrito está vacío', style: TextStyle(color: Colors.white38)),
+                    ),
+                  )
+                else
+                  ...cart.items.map((game) => _buildCartItem(game, cart)),
                 const SizedBox(height: 8),
-                const Text(
-                  'Los artículos de tu carrito se guardan en sesión. Inicia sesión para finalizar.',
-                  style: TextStyle(color: Colors.white38, fontSize: 11),
-                ),
+                if (!auth.isLoggedIn && cart.items.isNotEmpty)
+                  const Text(
+                    'Los artículos de tu carrito se guardan en sesión. Inicia sesión para finalizar.',
+                    style: TextStyle(color: Colors.white38, fontSize: 11),
+                  ),
               ],
             ),
           ),
-          _buildSummary(),
+          if (cart.items.isNotEmpty) _buildSummary(cart, auth),
         ],
       ),
     );
   }
 
-  Widget _buildCartItem(String title, String category, double price, String imgUrl) {
+  Widget _buildCartItem(GameSummary game, CartProvider cart) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
@@ -64,28 +73,39 @@ class _CartScreenState extends State<CartScreen> {
       ),
       child: Row(
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(2),
-            child: Image.network(imgUrl, width: 80, height: 45, fit: BoxFit.cover),
+          Container(
+            width: 80,
+            height: 45,
+            decoration: BoxDecoration(
+              color: Colors.black26,
+              borderRadius: BorderRadius.circular(2),
+            ),
+            child: Center(
+              child: Text(
+                game.title,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 8, color: Colors.white54),
+              ),
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                Text(game.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                   decoration: BoxDecoration(color: Colors.blue.withOpacity(0.2), borderRadius: BorderRadius.circular(2)),
-                  child: Text(category, style: const TextStyle(color: Colors.blue, fontSize: 10)),
+                  child: Text(game.shortDescription, style: const TextStyle(color: Colors.blue, fontSize: 10)),
                 ),
               ],
             ),
           ),
-          Text('\$$price', style: const TextStyle(fontWeight: FontWeight.bold)),
+          Text('\$${(game.priceCents / 100).toStringAsFixed(2)}', style: const TextStyle(fontWeight: FontWeight.bold)),
           const SizedBox(width: 12),
           IconButton(
-            onPressed: () {},
+            onPressed: () => cart.removeItem(game.id),
             icon: const Icon(Icons.close, color: Colors.white54, size: 18),
             style: IconButton.styleFrom(
               backgroundColor: Colors.white10,
@@ -97,7 +117,7 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
-  Widget _buildSummary() {
+  Widget _buildSummary(CartProvider cart, AuthProvider auth) {
     return Container(
       padding: const EdgeInsets.all(20),
       color: const Color(0xFF1B2838),
@@ -106,14 +126,14 @@ class _CartScreenState extends State<CartScreen> {
         children: [
           const Text('Resumen del pedido', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
-          _summaryRow('Artículos (2):', '\$79.98'),
+          _summaryRow('Artículos (${cart.count}):', '\$${cart.total.toStringAsFixed(2)}'),
           _summaryRow('Descuentos:', '\$0.00', color: Colors.green),
           const Divider(color: Colors.white10, height: 24),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text('Total:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              const Text('\$79.98 USD', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Text('\$${cart.total.toStringAsFixed(2)} USD', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             ],
           ),
           const SizedBox(height: 20),
@@ -121,9 +141,29 @@ class _CartScreenState extends State<CartScreen> {
             width: double.infinity,
             height: 45,
             child: ElevatedButton.icon(
-              onPressed: () {},
-              icon: const Icon(Icons.check, size: 18),
-              label: const Text('Finalizar compra'),
+              onPressed: () {
+                if (!auth.isLoggedIn) {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => LoginScreen(onLoggedIn: () {
+                        Navigator.pop(context);
+                        auth.login('Usuario');
+                      }),
+                    ),
+                  );
+                } else {
+                  cart.purchase();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('¡Compra realizada! Los juegos están en tu biblioteca.'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                  Navigator.pop(context);
+                }
+              },
+              icon: Icon(auth.isLoggedIn ? Icons.check : Icons.lock_outline, size: 18),
+              label: Text(auth.isLoggedIn ? 'Finalizar compra' : 'Inicia sesión para pagar'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF66C0F4),
                 foregroundColor: Colors.black,

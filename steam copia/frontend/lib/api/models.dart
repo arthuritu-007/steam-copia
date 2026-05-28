@@ -44,6 +44,10 @@ class GameSummary {
   final String currency;
   final String? releaseDate;
   final String? headerImageUrl;
+  final double rating;
+  final bool isNew;
+  final bool isFeatured;
+  final bool isTopSeller;
 
   GameSummary({
     required this.id,
@@ -54,6 +58,10 @@ class GameSummary {
     required this.currency,
     required this.releaseDate,
     required this.headerImageUrl,
+    this.rating = 4.5,
+    this.isNew = false,
+    this.isFeatured = false,
+    this.isTopSeller = false,
   });
 
   factory GameSummary.fromJson(Map<String, dynamic> json) {
@@ -66,6 +74,10 @@ class GameSummary {
       currency: json['currency'] as String,
       releaseDate: json['releaseDate'] as String?,
       headerImageUrl: json['headerImageUrl'] as String?,
+      rating: (json['rating'] as num?)?.toDouble() ?? 4.5,
+      isNew: json['isNew'] as bool? ?? false,
+      isFeatured: json['isFeatured'] as bool? ?? false,
+      isTopSeller: json['isTopSeller'] as bool? ?? false,
     );
   }
 }
