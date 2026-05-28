@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/api/api_client.dart';
+import 'package:frontend/api/models.dart';
 import 'package:frontend/auth/token_store.dart';
 
 class LoginScreen extends StatefulWidget {
