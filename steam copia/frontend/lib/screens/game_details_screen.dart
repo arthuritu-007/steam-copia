@@ -80,9 +80,26 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
             padding: const EdgeInsets.all(0),
             children: [
               if (g.headerImageUrl != null)
-                Image.network(g.headerImageUrl!, fit: BoxFit.cover, height: 200, width: double.infinity)
+                AspectRatio(
+                  aspectRatio: 16 / 9,
+                  child: Image.network(
+                    g.headerImageUrl!,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      color: Colors.black26,
+                      child: const Icon(Icons.broken_image, size: 100, color: Colors.white24),
+                    ),
+                  ),
+                )
               else
-                Container(height: 200, color: Colors.black26, child: const Icon(Icons.gamepad, size: 100)),
+                AspectRatio(
+                  aspectRatio: 16 / 9,
+                  child: Container(
+                    color: Colors.black26,
+                    child: const Icon(Icons.gamepad, size: 100, color: Colors.white24),
+                  ),
+                ),
               
               Padding(
                 padding: const EdgeInsets.all(16.0),

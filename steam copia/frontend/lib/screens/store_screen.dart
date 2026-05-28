@@ -143,12 +143,14 @@ class _StoreScreenState extends State<StoreScreen> {
   Widget _buildBanner() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [const Color(0xFF1B2838), const Color(0xFF171A21)],
+      padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 20),
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: NetworkImage(
+            'https://cdn.akamai.steamstatic.com/steam/apps/1091500/ss_f86f7f3f1e9c90a1845a76c024564c70d47d4885.1920x1080.jpg',
+          ),
+          fit: BoxFit.cover,
+          colorFilter: ColorFilter.mode(Colors.black54, BlendMode.darken),
         ),
       ),
       child: Column(
@@ -156,29 +158,32 @@ class _StoreScreenState extends State<StoreScreen> {
           const Text(
             'Bienvenido a SteamClon',
             style: TextStyle(
-              fontSize: 24,
+              fontSize: 28,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF66C0F4),
+              color: Colors.white,
             ),
           ),
           const SizedBox(height: 8),
           const Text(
             'Tu tienda de videojuegos favorita. Miles de títulos, un solo lugar.',
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.white70),
+            style: TextStyle(color: Colors.white70, fontSize: 14),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 24),
           ElevatedButton(
             onPressed: () {},
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF2A475E),
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              backgroundColor: const Color(0xFF66C0F4).withOpacity(0.8),
+              foregroundColor: Colors.black,
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(4),
               ),
             ),
-            child: const Text('Ver catálogo completo'),
+            child: const Text(
+              'Ver catálogo completo',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
         ],
       ),
@@ -188,18 +193,37 @@ class _StoreScreenState extends State<StoreScreen> {
   Widget _buildCategories() {
     final categories = ['Destacados', 'Nuevos', 'Más vendidos', 'Gratis'];
     return Container(
-      height: 40,
-      color: const Color(0xFF171A21),
+      height: 45,
+      decoration: const BoxDecoration(
+        color: Color(0xFF171A21),
+        border: Border(bottom: BorderSide(color: Colors.white10)),
+      ),
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 8),
         itemCount: categories.length,
         itemBuilder: (context, index) {
+          bool isSelected = index == 0;
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Center(
+            padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 8),
+            child: TextButton(
+              onPressed: () {},
+              style: TextButton.styleFrom(
+                foregroundColor: isSelected ? Colors.white : Colors.white38,
+                backgroundColor: isSelected
+                    ? Colors.white.withOpacity(0.05)
+                    : null,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
               child: Text(
                 categories[index],
-                style: const TextStyle(color: Colors.white54, fontSize: 13),
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                ),
               ),
             ),
           );
@@ -213,6 +237,7 @@ class _StoreScreenState extends State<StoreScreen> {
     return Card(
       color: const Color(0xFF1B2838),
       clipBehavior: Clip.antiAlias,
+      elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
       child: InkWell(
         onTap: () => Navigator.of(context).push(
@@ -223,12 +248,23 @@ class _StoreScreenState extends State<StoreScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
+            AspectRatio(
+              aspectRatio: 1, // Change to 1:1 square ratio for vertical look
               child: Container(
                 width: double.infinity,
-                color: Colors.black26,
+                decoration: const BoxDecoration(color: Colors.black26),
                 child: game.headerImageUrl != null
-                    ? Image.network(game.headerImageUrl!, fit: BoxFit.cover)
+                    ? Image.network(
+                        game.headerImageUrl!,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Center(
+                              child: Icon(
+                                Icons.broken_image,
+                                color: Colors.white24,
+                              ),
+                            ),
+                      )
                     : const Icon(
                         Icons.gamepad,
                         size: 50,
@@ -247,25 +283,27 @@ class _StoreScreenState extends State<StoreScreen> {
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 14,
+                      fontSize: 13,
                     ),
                   ),
+                  const SizedBox(height: 2),
                   Text(
                     game.shortDescription,
-                    style: const TextStyle(color: Colors.white54, fontSize: 11),
+                    style: const TextStyle(color: Colors.white38, fontSize: 10),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 12),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 6,
+                          horizontal: 4,
                           vertical: 2,
                         ),
-                        color: isFree
-                            ? Colors.green.withOpacity(0.2)
-                            : const Color(0xFF000000).withOpacity(0.3),
+                        decoration: BoxDecoration(
+                          color: Colors.black45,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
                         child: Text(
                           isFree
                               ? 'GRATIS'
@@ -275,30 +313,39 @@ class _StoreScreenState extends State<StoreScreen> {
                                 ? Colors.lightGreenAccent
                                 : const Color(0xFF66C0F4),
                             fontWeight: FontWeight.bold,
-                            fontSize: 12,
+                            fontSize: 11,
                           ),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 12),
                   SizedBox(
                     width: double.infinity,
-                    height: 30,
+                    height: 34,
                     child: OutlinedButton(
-                      onPressed: () {},
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => GameDetailsScreen(
+                            slug: game.slug,
+                            gameId: game.id,
+                          ),
+                        ),
+                      ),
                       style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Colors.white24),
+                        side: const BorderSide(color: Colors.white12),
+                        backgroundColor: Colors.white.withOpacity(0.05),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(4),
                         ),
                         padding: EdgeInsets.zero,
                       ),
                       child: Text(
-                        isFree ? 'Jugar ahora' : 'Ver detalle',
+                        isFree ? 'Jugar ahora' : 'Ver en tienda',
                         style: const TextStyle(
-                          fontSize: 12,
+                          fontSize: 11,
                           color: Colors.white,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
