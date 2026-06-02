@@ -1,0 +1,12 @@
+[build]
+  publish = "frontend/build/web"
+  command = "echo 'Skipping build command as Flutter is not installed in the default Netlify image. Please build locally and push the build/ folder.'"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  force = true
+
+[build.environment]
+  NODE_VERSION = "20"

@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: steam-copia-backend
+    env: java
+    plan: free
+    rootDir: backend
+    buildCommand: ./mvnw clean package -DskipTests
+    startCommand: java -jar target/backend-0.0.1-SNAPSHOT.jar
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: DB_URL
+        value: jdbc:postgresql://db.twvdwbnujpbheoehnjpk.supabase.co:5432/postgres
+      - key: DB_USER
+        value: postgres
+      - key: DB_PASSWORD
+        value: Cagh12rbh09-
+      - key: JWT_SECRET
+        value: esta-es-una-clave-secreta-muy-larga-y-segura-de-mas-de-32-caracteres
+      - key: JAVA_VERSION
+        value: 17
