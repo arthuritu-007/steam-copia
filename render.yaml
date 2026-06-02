@@ -4,8 +4,8 @@ services:
     name: steam-copia-backend
     env: java
     plan: free
-    buildCommand: cd backend && ./mvnw clean package -DskipTests
-    startCommand: java -jar backend/target/backend-0.0.1-SNAPSHOT.jar
+    buildCommand: cd "steam copia/backend" && ./mvnw clean package -DskipTests
+    startCommand: java -jar "steam copia/backend/target/backend-0.0.1-SNAPSHOT.jar"
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: h2
@@ -17,7 +17,7 @@ services:
     name: steam-copia-frontend
     env: static
     plan: free
-    publishPath: frontend/build/web
+    publishPath: "steam copia/frontend/build/web"
     routes:
       - type: rewrite
         source: /*
