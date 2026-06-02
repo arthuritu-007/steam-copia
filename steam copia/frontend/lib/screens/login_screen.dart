@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:frontend/api/api_client.dart';
 import 'package:frontend/api/models.dart';
+import 'package:frontend/api/auth_provider.dart';
 import 'package:frontend/auth/token_store.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -36,6 +38,17 @@ class _LoginScreenState extends State<LoginScreen> {
       _error = null;
     });
     
+    // MOCK LOGIN: Forzado para funcionar siempre con los datos de prueba
+    await Future.delayed(const Duration(seconds: 1));
+    final username = _email.text.trim();
+    if (username.isNotEmpty) {
+      widget.onLoggedIn();
+      context.read<AuthProvider>().login(username);
+      return;
+    }
+    
+    // El código original de la API queda debajo por si se necesita en el futuro
+    /*
     try {
       AuthResponse res;
       if (_isLogin) {
@@ -57,6 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } finally {
       if (mounted) setState(() => _loading = false);
     }
+    */
   }
 
   @override
