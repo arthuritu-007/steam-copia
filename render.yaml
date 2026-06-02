@@ -15,7 +15,7 @@ services:
   # Frontend (Flutter Web)
   - type: web
     name: steam-copia-frontend
-    env: static
+    runtime: static
     plan: free
     publishPath: "steam copia/frontend/build/web"
     routes:
