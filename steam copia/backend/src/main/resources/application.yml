@@ -20,6 +20,6 @@ spring:
 app:
   jwt:
     issuer: ${JWT_ISSUER:steam-copia}
-    secret: ${JWT_SECRET:change-me-in-dev}
+    secret: ${JWT_SECRET:this-is-a-very-long-and-secure-secret-key-for-development-32-chars}
     accessTokenMinutes: ${JWT_ACCESS_MINUTES:60}
 
