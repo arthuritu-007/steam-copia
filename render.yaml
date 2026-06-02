@@ -1,9 +1,9 @@
 services:
   - type: web
     name: steam-copia-backend
-    env: java
+    runtime: java
     plan: free
-    rootDir: steam copia/backend
+    rootDir: "steam copia/backend"
     buildCommand: ./mvnw clean package -DskipTests
     startCommand: java -jar target/backend-0.0.1-SNAPSHOT.jar
     envVars:
