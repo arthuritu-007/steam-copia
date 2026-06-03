@@ -1,5 +1,5 @@
 [build]
-  publish = "steam copia/frontend/build/web"
+  publish = "steam copia/deploy"
   command = ""
 
 [[redirects]]
