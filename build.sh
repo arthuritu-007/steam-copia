@@ -1,26 +1,28 @@
 #!/bin/bash
 
-# Script to build Flutter web on Render/Netlify
+# Script de construcción para Render
+set -e # Detener si hay error
 
 FLUTTER_CHANNEL=stable
 
-# Install Flutter
+# 1. Instalar Flutter si no existe
 if [ ! -d "flutter" ]; then
-  echo "Downloading Flutter..."
+  echo "Descargando Flutter..."
   git clone https://github.com/flutter/flutter.git -b $FLUTTER_CHANNEL --depth 1
 fi
 
-# Add Flutter to path
+# 2. Configurar el Path
 export PATH="$PATH:$(pwd)/flutter/bin"
 
-# Enable web
+# 3. Limpiar y preparar
 flutter config --enable-web
-
-# Build frontend
-echo "Building frontend..."
 cd frontend
+flutter clean
 flutter pub get
-flutter build web --release --web-renderer html --dart-define=API_BASE_URL=$API_BASE_URL
-cd ..
 
-echo "Build complete!"
+# 4. Compilar para Web con renderer HTML (más compatible)
+echo "Compilando frontend..."
+flutter build web --release --web-renderer html --dart-define=API_BASE_URL=$API_BASE_URL
+
+echo "Compilación completada con éxito."
+cd ..
