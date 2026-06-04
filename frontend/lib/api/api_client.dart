@@ -104,7 +104,49 @@ class ApiClient {
     return GameDetails.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
   }
 
-  Future<List<LibraryItem>> getLibrary() async {
+  // Community
+  Future<List<CommunityPost>> listCommunityPosts(String gameId) async {
+    final res = await _http.get(
+      _uri('/api/community/$gameId'),
+      headers: await _headers(),
+    );
+    if (res.statusCode >= 400) throw _errorFrom(res);
+    final list = jsonDecode(res.body) as List<dynamic>;
+    return list.map((e) => CommunityPost.fromJson(e as Map<String, dynamic>)).toList();
+  }
+
+  Future<CommunityPost> createCommunityPost(String gameId, String content) async {
+    final res = await _http.post(
+      _uri('/api/community/$gameId'),
+      headers: await _headers(auth: true),
+      body: content,
+    );
+    if (res.statusCode >= 400) throw _errorFrom(res);
+    return CommunityPost.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
+  }
+
+  // Admin
+  Future<void> banUser(String userId) async {
+    final res = await _http.post(_uri('/api/admin/users/$userId/ban'), headers: await _headers(auth: true));
+    if (res.statusCode >= 400) throw _errorFrom(res);
+  }
+
+  Future<void> unbanUser(String userId) async {
+    final res = await _http.post(_uri('/api/admin/users/$userId/unban'), headers: await _headers(auth: true));
+    if (res.statusCode >= 400) throw _errorFrom(res);
+  }
+
+  Future<void> giftGame(String userId, String gameId) async {
+    final res = await _http.post(_uri('/api/admin/users/$userId/gift/$gameId'), headers: await _headers(auth: true));
+    if (res.statusCode >= 400) throw _errorFrom(res);
+  }
+
+  Future<void> deletePost(String postId) async {
+    final res = await _http.delete(_uri('/api/admin/community/posts/$postId'), headers: await _headers(auth: true));
+    if (res.statusCode >= 400) throw _errorFrom(res);
+  }
+
+  Future<List<LibraryItem>> listLibrary() async {
     final res = await _http.get(
       _uri('/api/library'),
       headers: await _headers(auth: true),

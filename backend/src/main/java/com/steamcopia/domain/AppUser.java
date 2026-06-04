@@ -32,6 +32,9 @@ public class AppUser {
   @Column(name = "created_at", nullable = false)
   private Instant createdAt;
 
+  @Column(name = "is_banned", nullable = false)
+  private boolean banned = false;
+
   public UUID getId() {
     return id;
   }
@@ -78,6 +81,14 @@ public class AppUser {
 
   public void setCreatedAt(Instant createdAt) {
     this.createdAt = createdAt;
+  }
+
+  public boolean isBanned() {
+    return banned;
+  }
+
+  public void setBanned(boolean banned) {
+    this.banned = banned;
   }
 }
 

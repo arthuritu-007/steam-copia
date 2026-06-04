@@ -120,6 +120,29 @@ class GameDetails {
   }
 }
 
+class CommunityPost {
+  final String id;
+  final String username;
+  final String content;
+  final DateTime createdAt;
+
+  CommunityPost({
+    required this.id,
+    required this.username,
+    required this.content,
+    required this.createdAt,
+  });
+
+  factory CommunityPost.fromJson(Map<String, dynamic> json) {
+    return CommunityPost(
+      id: json['id'] as String,
+      username: json['username'] as String,
+      content: json['content'] as String,
+      createdAt: DateTime.parse(json['createdAt'] as String),
+    );
+  }
+}
+
 class LibraryItem {
   final String gameId;
   final String slug;

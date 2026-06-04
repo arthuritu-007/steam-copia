@@ -6,6 +6,7 @@ import 'package:frontend/screens/cart_screen.dart';
 import 'package:frontend/screens/login_screen.dart';
 import 'package:frontend/api/auth_provider.dart';
 import 'package:frontend/api/cart_provider.dart';
+import 'package:frontend/screens/admin_panel_screen.dart';
 
 class HomeShell extends StatefulWidget {
   final Future<void> Function() onLogout;
@@ -27,6 +28,7 @@ class _HomeShellState extends State<HomeShell> {
       const StoreScreen(),
       const StoreScreen(), // Using StoreScreen for Catalogo as well for now
       if (auth.isLoggedIn) const LibraryScreen() else const LoginPlaceholder(),
+      if (auth.userRole == 'ADMIN') const AdminPanelScreen(),
     ];
 
     return Scaffold(
@@ -46,6 +48,7 @@ class _HomeShellState extends State<HomeShell> {
             _navItem('TIENDA', 0),
             _navItem('CATÁLOGO', 1),
             if (auth.isLoggedIn) _navItem('BIBLIOTECA', 2),
+            if (auth.userRole == 'ADMIN') _navItem('ADMIN', 3),
           ],
         ),
         actions: [
@@ -65,26 +68,34 @@ class _HomeShellState extends State<HomeShell> {
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (_) => LoginScreen(onLoggedIn: () {
-                      Navigator.pop(context);
-                      auth.login('Usuario'); // Mock username
-                    }),
+                    builder: (_) => LoginScreen(
+                      onLoggedIn: () {
+                        Navigator.pop(context);
+                        auth.login('Usuario'); // Mock username
+                      },
+                    ),
                   ),
                 );
               },
-              child: const Text('INICIAR SESIÓN', style: TextStyle(color: Colors.white70, fontSize: 12)),
+              child: const Text(
+                'INICIAR SESIÓN',
+                style: TextStyle(color: Colors.white70, fontSize: 12),
+              ),
             ),
-          
+
           Stack(
             alignment: Alignment.center,
             children: [
               IconButton(
                 onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const CartScreen()),
-                  );
+                  Navigator.of(
+                    context,
+                  ).push(MaterialPageRoute(builder: (_) => const CartScreen()));
                 },
-                icon: const Icon(Icons.shopping_cart_outlined, color: Colors.white70),
+                icon: const Icon(
+                  Icons.shopping_cart_outlined,
+                  color: Colors.white70,
+                ),
               ),
               if (cart.count > 0)
                 Positioned(
@@ -97,10 +108,16 @@ class _HomeShellState extends State<HomeShell> {
                       borderRadius: BorderRadius.circular(4),
                       border: Border.all(color: Colors.white24),
                     ),
-                    constraints: const BoxConstraints(minWidth: 14, minHeight: 14),
+                    constraints: const BoxConstraints(
+                      minWidth: 14,
+                      minHeight: 14,
+                    ),
                     child: Text(
                       cart.count.toString(),
-                      style: const TextStyle(fontSize: 8, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        fontSize: 8,
+                        fontWeight: FontWeight.bold,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -154,10 +171,12 @@ class LoginPlaceholder extends StatelessWidget {
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (_) => LoginScreen(onLoggedIn: () {
-                    Navigator.pop(context);
-                    auth.login('Usuario');
-                  }),
+                  builder: (_) => LoginScreen(
+                    onLoggedIn: () {
+                      Navigator.pop(context);
+                      auth.login('Usuario');
+                    },
+                  ),
                 ),
               );
             },
