@@ -6,7 +6,6 @@ backend/target/
 
 # frontend/build/ (comentado para despliegue rápido en Netlify)
 !frontend/build/web/
-!deploy/
 frontend/.dart_tool/
 frontend/.flutter-plugins
 frontend/.flutter-plugins-dependencies

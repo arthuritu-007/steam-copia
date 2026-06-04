@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/api/api_client.dart';
-import 'package:frontend/api/models.dart';
 import 'package:frontend/api/auth_provider.dart';
 import 'package:frontend/auth/token_store.dart';
 

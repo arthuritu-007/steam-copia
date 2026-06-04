@@ -1,8 +1,13 @@
 [build]
-  publish = "steam copia/deploy"
-  command = ""
+  publish = "frontend/build/web"
+  command = "bash build.sh"
+
+[build.environment]
+  FLUTTER_VERSION = "3.16.0"
+  NODE_VERSION = "20"
 
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+  force = true
