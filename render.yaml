@@ -24,8 +24,9 @@ services:
         value: 17
 
   # Frontend (Static Site)
-  - type: static
+  - type: web
     name: steam-copia-frontend
+    env: static
     plan: free
     buildCommand: bash build.sh
     publishPath: frontend/build/web
