@@ -55,7 +55,8 @@ class HardcodedGameRepository implements GameRepository {
       shortDescription: 'RPG',
       priceCents: 2999,
       currency: 'USD',
-      headerImageUrl: null,
+      headerImageUrl:
+          'https://cdn.akamai.steamstatic.com/steam/apps/1091500/header.jpg',
       releaseDate: '2020-12-10',
       rating: 4.5,
       isFeatured: true,
@@ -67,7 +68,8 @@ class HardcodedGameRepository implements GameRepository {
       shortDescription: 'RPG',
       priceCents: 1999,
       currency: 'USD',
-      headerImageUrl: null,
+      headerImageUrl:
+          'https://cdn.akamai.steamstatic.com/steam/apps/292030/header.jpg',
       releaseDate: '2015-05-18',
       rating: 4.9,
       isFeatured: true,
@@ -80,7 +82,8 @@ class HardcodedGameRepository implements GameRepository {
       shortDescription: 'FPS',
       priceCents: 0,
       currency: 'USD',
-      headerImageUrl: null,
+      headerImageUrl:
+          'https://cdn.akamai.steamstatic.com/steam/apps/730/header.jpg',
       releaseDate: '2023-09-27',
       rating: 4.3,
       isNew: true,
@@ -93,7 +96,8 @@ class HardcodedGameRepository implements GameRepository {
       shortDescription: 'Action RPG',
       priceCents: 4999,
       currency: 'USD',
-      headerImageUrl: null,
+      headerImageUrl:
+          'https://cdn.akamai.steamstatic.com/steam/apps/1245620/header.jpg',
       releaseDate: '2022-02-25',
       rating: 4.8,
       isFeatured: true,
@@ -106,7 +110,8 @@ class HardcodedGameRepository implements GameRepository {
       shortDescription: 'Sandbox',
       priceCents: 2699,
       currency: 'USD',
-      headerImageUrl: null,
+      headerImageUrl:
+          'https://upload.wikimedia.org/wikipedia/en/5/51/Minecraft_cover.png',
       releaseDate: '2011-11-18',
       rating: 4.7,
       isTopSeller: true,
@@ -118,7 +123,8 @@ class HardcodedGameRepository implements GameRepository {
       shortDescription: 'MOBA',
       priceCents: 0,
       currency: 'USD',
-      headerImageUrl: null,
+      headerImageUrl:
+          'https://cdn.akamai.steamstatic.com/steam/apps/570/header.jpg',
       releaseDate: '2013-07-09',
       rating: 4.2,
       isTopSeller: true,
@@ -130,7 +136,8 @@ class HardcodedGameRepository implements GameRepository {
       shortDescription: 'Acción',
       priceCents: 3999,
       currency: 'USD',
-      headerImageUrl: null,
+      headerImageUrl:
+          'https://cdn.akamai.steamstatic.com/steam/apps/1174180/header.jpg',
       releaseDate: '2018-10-26',
       rating: 4.9,
       isFeatured: true,
@@ -142,7 +149,8 @@ class HardcodedGameRepository implements GameRepository {
       shortDescription: 'Acción',
       priceCents: 1999,
       currency: 'USD',
-      headerImageUrl: null,
+      headerImageUrl:
+          'https://cdn.akamai.steamstatic.com/steam/apps/271590/header.jpg',
       releaseDate: '2013-09-17',
       rating: 4.4,
       isTopSeller: true,
@@ -154,7 +162,8 @@ class HardcodedGameRepository implements GameRepository {
       shortDescription: 'RPG',
       priceCents: 5999,
       currency: 'USD',
-      headerImageUrl: null,
+      headerImageUrl:
+          'https://cdn.akamai.steamstatic.com/steam/apps/1086940/header.jpg',
       releaseDate: '2023-08-03',
       rating: 4.9,
       isNew: true,
@@ -168,7 +177,8 @@ class HardcodedGameRepository implements GameRepository {
       shortDescription: 'RPG Espacial',
       priceCents: 6999,
       currency: 'USD',
-      headerImageUrl: null,
+      headerImageUrl:
+          'https://cdn.akamai.steamstatic.com/steam/apps/1716740/header.jpg',
       releaseDate: '2023-09-06',
       rating: 3.8,
       isNew: true,
@@ -180,7 +190,8 @@ class HardcodedGameRepository implements GameRepository {
       shortDescription: 'Roguelike',
       priceCents: 2999,
       currency: 'USD',
-      headerImageUrl: null,
+      headerImageUrl:
+          'https://cdn.akamai.steamstatic.com/steam/apps/1145350/header.jpg',
       releaseDate: '2024-05-06',
       rating: 4.9,
       isNew: true,
@@ -193,7 +204,8 @@ class HardcodedGameRepository implements GameRepository {
       shortDescription: 'Shooter Coop',
       priceCents: 3999,
       currency: 'USD',
-      headerImageUrl: null,
+      headerImageUrl:
+          'https://cdn.akamai.steamstatic.com/steam/apps/553850/header.jpg',
       releaseDate: '2024-02-08',
       rating: 4.6,
       isNew: true,
@@ -206,7 +218,8 @@ class HardcodedGameRepository implements GameRepository {
       shortDescription: 'Simulación',
       priceCents: 1499,
       currency: 'USD',
-      headerImageUrl: null,
+      headerImageUrl:
+          'https://cdn.akamai.steamstatic.com/steam/apps/413150/header.jpg',
       releaseDate: '2016-02-26',
       rating: 4.9,
     ),
@@ -217,7 +230,8 @@ class HardcodedGameRepository implements GameRepository {
       shortDescription: 'Aventura',
       priceCents: 999,
       currency: 'USD',
-      headerImageUrl: null,
+      headerImageUrl:
+          'https://cdn.akamai.steamstatic.com/steam/apps/105600/header.jpg',
       releaseDate: '2011-05-16',
       rating: 4.8,
     ),
@@ -228,7 +242,8 @@ class HardcodedGameRepository implements GameRepository {
       shortDescription: 'Battle Royale',
       priceCents: 0,
       currency: 'USD',
-      headerImageUrl: null,
+      headerImageUrl:
+          'https://cdn.akamai.steamstatic.com/steam/apps/1172470/header.jpg',
       releaseDate: '2019-02-04',
       rating: 4.1,
       isTopSeller: true,
@@ -240,7 +255,8 @@ class HardcodedGameRepository implements GameRepository {
       shortDescription: 'Supervivencia',
       priceCents: 3999,
       currency: 'USD',
-      headerImageUrl: null,
+      headerImageUrl:
+          'https://cdn.akamai.steamstatic.com/steam/apps/252490/header.jpg',
       releaseDate: '2018-02-08',
       rating: 4.0,
     ),
@@ -251,7 +267,8 @@ class HardcodedGameRepository implements GameRepository {
       shortDescription: 'Tactical Shooter',
       priceCents: 0,
       currency: 'USD',
-      headerImageUrl: null,
+      headerImageUrl:
+          'https://upload.wikimedia.org/wikipedia/commons/f/fc/Valorant_logo_-_pink_color_version.png',
       releaseDate: '2020-06-02',
       rating: 4.4,
     ),
@@ -262,7 +279,8 @@ class HardcodedGameRepository implements GameRepository {
       shortDescription: 'MOBA',
       priceCents: 0,
       currency: 'USD',
-      headerImageUrl: null,
+      headerImageUrl:
+          'https://upload.wikimedia.org/wikipedia/commons/7/77/League_of_Legends_logo.png',
       releaseDate: '2009-10-27',
       rating: 4.0,
     ),
@@ -273,7 +291,8 @@ class HardcodedGameRepository implements GameRepository {
       shortDescription: 'Metroidvania',
       priceCents: 1499,
       currency: 'USD',
-      headerImageUrl: null,
+      headerImageUrl:
+          'https://cdn.akamai.steamstatic.com/steam/apps/367520/header.jpg',
       releaseDate: '2017-02-24',
       rating: 4.9,
     ),
@@ -284,7 +303,8 @@ class HardcodedGameRepository implements GameRepository {
       shortDescription: 'Exploración',
       priceCents: 2499,
       currency: 'USD',
-      headerImageUrl: null,
+      headerImageUrl:
+          'https://cdn.akamai.steamstatic.com/steam/apps/753640/header.jpg',
       releaseDate: '2019-05-28',
       rating: 4.9,
     ),
@@ -295,7 +315,8 @@ class HardcodedGameRepository implements GameRepository {
       shortDescription: 'Piratas',
       priceCents: 3999,
       currency: 'USD',
-      headerImageUrl: null,
+      headerImageUrl:
+          'https://cdn.akamai.steamstatic.com/steam/apps/1172620/header.jpg',
       releaseDate: '2018-03-20',
       rating: 4.3,
     ),
@@ -306,7 +327,8 @@ class HardcodedGameRepository implements GameRepository {
       shortDescription: 'Carreras',
       priceCents: 5999,
       currency: 'USD',
-      headerImageUrl: null,
+      headerImageUrl:
+          'https://cdn.akamai.steamstatic.com/steam/apps/1551360/header.jpg',
       releaseDate: '2021-11-09',
       rating: 4.7,
     ),
@@ -317,7 +339,8 @@ class HardcodedGameRepository implements GameRepository {
       shortDescription: 'Cooperativo',
       priceCents: 3999,
       currency: 'USD',
-      headerImageUrl: null,
+      headerImageUrl:
+          'https://cdn.akamai.steamstatic.com/steam/apps/1426210/header.jpg',
       releaseDate: '2021-03-26',
       rating: 4.9,
     ),
@@ -328,13 +351,47 @@ class HardcodedGameRepository implements GameRepository {
       shortDescription: 'Terror Coop',
       priceCents: 999,
       currency: 'USD',
-      headerImageUrl: null,
+      headerImageUrl:
+          'https://cdn.akamai.steamstatic.com/steam/apps/1966720/header.jpg',
       releaseDate: '2023-10-23',
       rating: 4.8,
       isNew: true,
       isTopSeller: true,
     ),
   ];
+
+  static final Map<String, List<CommunityPost>> _postsByGameId = {
+    '4': [
+      CommunityPost(
+        id: 'p-elden-1',
+        username: 'Admin',
+        content: 'Consejo: si te cuesta un boss, cambia de build y sube vigor.',
+        createdAt: DateTime.now().subtract(const Duration(hours: 5)),
+      ),
+      CommunityPost(
+        id: 'p-elden-2',
+        username: 'Gamer',
+        content: 'Increíble el diseño del mundo. ¿Cuál zona te gustó más?',
+        createdAt: DateTime.now().subtract(const Duration(days: 1, hours: 2)),
+      ),
+    ],
+    '6': [
+      CommunityPost(
+        id: 'p-dota-1',
+        username: 'SupportMain',
+        content: '¿Qué héroe recomiendan para empezar como support?',
+        createdAt: DateTime.now().subtract(const Duration(hours: 11)),
+      ),
+    ],
+    '13': [
+      CommunityPost(
+        id: 'p-sv-1',
+        username: 'Farmer',
+        content: 'Año 2 y recién logro optimizar el invernadero. Tips?',
+        createdAt: DateTime.now().subtract(const Duration(days: 2, hours: 3)),
+      ),
+    ],
+  };
 
   @override
   Future<List<GameSummary>> listGames({String? q}) async {
@@ -361,19 +418,25 @@ class HardcodedGameRepository implements GameRepository {
   }
 
   @override
-  Future<List<CommunityPost>> listCommunityPosts(String gameId) async => [];
+  Future<List<CommunityPost>> listCommunityPosts(String gameId) async {
+    final list = _postsByGameId[gameId] ?? const <CommunityPost>[];
+    return List.unmodifiable(list);
+  }
 
   @override
   Future<CommunityPost> createCommunityPost(
     String gameId,
     String content,
   ) async {
-    return CommunityPost(
-      id: '1',
+    final post = CommunityPost(
+      id: 'p-${DateTime.now().microsecondsSinceEpoch}',
       username: 'User',
       content: content,
       createdAt: DateTime.now(),
     );
+    final list = _postsByGameId.putIfAbsent(gameId, () => []);
+    list.insert(0, post);
+    return post;
   }
 
   @override

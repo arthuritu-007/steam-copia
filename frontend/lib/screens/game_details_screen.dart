@@ -9,10 +9,12 @@ import 'package:frontend/screens/login_screen.dart';
 class GameDetailsScreen extends StatefulWidget {
   final String slug;
   final String gameId;
+  final int initialTabIndex;
   const GameDetailsScreen({
     super.key,
     required this.slug,
     required this.gameId,
+    this.initialTabIndex = 0,
   });
 
   @override
@@ -32,13 +34,10 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
     final cart = context.watch<CartProvider>();
+    final cs = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF171A21),
-      appBar: AppBar(
-        title: const Text('Detalle del Juego'),
-        backgroundColor: const Color(0xFF1B2838),
-      ),
+      appBar: AppBar(title: const Text('Detalle del Juego')),
       body: FutureBuilder<GameDetails>(
         future: _future,
         builder: (context, snapshot) {
@@ -89,10 +88,7 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
                     const SizedBox(height: 4),
                     Text(
                       g.shortDescription,
-                      style: const TextStyle(
-                        color: Color(0xFF66C0F4),
-                        fontSize: 14,
-                      ),
+                      style: TextStyle(color: cs.primary, fontSize: 14),
                     ),
                     const SizedBox(height: 20),
                     const Text(
@@ -114,16 +110,17 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
                     ),
                     const SizedBox(height: 24),
                     DefaultTabController(
+                      initialIndex: widget.initialTabIndex.clamp(0, 1),
                       length: 2,
                       child: Column(
                         children: [
-                          const TabBar(
-                            tabs: [
+                          TabBar(
+                            tabs: const [
                               Tab(text: 'COMPRAR'),
                               Tab(text: 'COMUNIDAD'),
                             ],
-                            indicatorColor: Color(0xFF66C0F4),
-                            labelColor: Color(0xFF66C0F4),
+                            indicatorColor: cs.primary,
+                            labelColor: cs.primary,
                             unselectedLabelColor: Colors.white54,
                           ),
                           SizedBox(
@@ -163,12 +160,13 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
     AuthProvider auth,
     CartProvider cart,
   ) {
+    final cs = Theme.of(context).colorScheme;
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(vertical: 20),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: const Color(0xFF1B2838),
+          color: cs.surface,
           borderRadius: BorderRadius.circular(4),
         ),
         child: Row(
@@ -202,10 +200,10 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
                 ),
               )
             else if (isInCart)
-              const Text(
+              Text(
                 'EN EL CARRITO',
                 style: TextStyle(
-                  color: Color(0xFF66C0F4),
+                  color: cs.primary,
                   fontWeight: FontWeight.bold,
                 ),
               )
@@ -235,13 +233,6 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
                     );
                   }
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF67c1f5),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
                 child: const Text('AÑADIR AL CARRITO'),
               ),
           ],
@@ -278,6 +269,7 @@ class _CommunitySectionState extends State<_CommunitySection> {
   @override
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
+    final cs = Theme.of(context).colorScheme;
 
     return Column(
       children: [
@@ -289,14 +281,8 @@ class _CommunitySectionState extends State<_CommunitySection> {
                 Expanded(
                   child: TextField(
                     controller: _postController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: 'Publica algo en la comunidad...',
-                      filled: true,
-                      fillColor: Colors.black26,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(4),
-                        borderSide: BorderSide.none,
-                      ),
                     ),
                     maxLines: 2,
                   ),
@@ -318,7 +304,7 @@ class _CommunitySectionState extends State<_CommunitySection> {
                       ).showSnackBar(SnackBar(content: Text(e.toString())));
                     }
                   },
-                  icon: const Icon(Icons.send, color: Color(0xFF66C0F4)),
+                  icon: Icon(Icons.send, color: cs.primary),
                 ),
               ],
             ),

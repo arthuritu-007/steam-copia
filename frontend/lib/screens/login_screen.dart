@@ -36,16 +36,27 @@ class _LoginScreenState extends State<LoginScreen> {
       _loading = true;
       _error = null;
     });
-    
+
     // MOCK LOGIN: Forzado para funcionar siempre con los datos de prueba
     await Future.delayed(const Duration(seconds: 1));
     final username = _email.text.trim();
     if (username.isNotEmpty) {
+      final role = username.toLowerCase() == 'admin' ? 'ADMIN' : 'USER';
+      context.read<AuthProvider>().login(username, role);
+      if (mounted) {
+        setState(() => _loading = false);
+      }
       widget.onLoggedIn();
-      context.read<AuthProvider>().login(username);
       return;
     }
-    
+
+    if (mounted) {
+      setState(() {
+        _loading = false;
+        _error = 'Ingresa un usuario';
+      });
+    }
+
     // El código original de la API queda debajo por si se necesita en el futuro
     /*
     try {
