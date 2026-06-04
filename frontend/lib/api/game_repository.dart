@@ -4,6 +4,14 @@ import 'api_client.dart';
 abstract class GameRepository {
   Future<List<GameSummary>> listGames({String? q});
   Future<GameDetails> getGameDetails(String slug);
+  // Community
+  Future<List<CommunityPost>> listCommunityPosts(String gameId);
+  Future<CommunityPost> createCommunityPost(String gameId, String content);
+  // Admin
+  Future<void> banUser(String userId);
+  Future<void> unbanUser(String userId);
+  Future<void> giftGame(String userId, String gameId);
+  Future<void> deletePost(String postId);
 }
 
 class ApiGameRepository implements GameRepository {
@@ -15,6 +23,27 @@ class ApiGameRepository implements GameRepository {
 
   @override
   Future<GameDetails> getGameDetails(String slug) => _api.getGameDetails(slug);
+
+  @override
+  Future<List<CommunityPost>> listCommunityPosts(String gameId) =>
+      _api.listCommunityPosts(gameId);
+
+  @override
+  Future<CommunityPost> createCommunityPost(String gameId, String content) =>
+      _api.createCommunityPost(gameId, content);
+
+  @override
+  Future<void> banUser(String userId) => _api.banUser(userId);
+
+  @override
+  Future<void> unbanUser(String userId) => _api.unbanUser(userId);
+
+  @override
+  Future<void> giftGame(String userId, String gameId) =>
+      _api.giftGame(userId, gameId);
+
+  @override
+  Future<void> deletePost(String postId) => _api.deletePost(postId);
 }
 
 class HardcodedGameRepository implements GameRepository {
@@ -317,19 +346,47 @@ class HardcodedGameRepository implements GameRepository {
 
   @override
   Future<GameDetails> getGameDetails(String slug) async {
-    final game = _games.firstWhere((g) => g.slug == slug);
+    final s = _games.firstWhere((g) => g.slug == slug);
     return GameDetails(
-      id: game.id,
-      slug: game.slug,
-      title: game.title,
-      shortDescription: game.shortDescription,
-      longDescription: 'This is a hardcoded description for ${game.title}.',
-      priceCents: game.priceCents,
-      currency: game.currency,
-      headerImageUrl: game.headerImageUrl,
-      releaseDate: game.releaseDate,
+      id: s.id,
+      slug: s.slug,
+      title: s.title,
+      shortDescription: s.shortDescription,
+      longDescription: 'Detalles del juego hardcodeado...',
+      priceCents: s.priceCents,
+      currency: s.currency,
+      releaseDate: s.releaseDate,
+      headerImageUrl: s.headerImageUrl,
     );
   }
+
+  @override
+  Future<List<CommunityPost>> listCommunityPosts(String gameId) async => [];
+
+  @override
+  Future<CommunityPost> createCommunityPost(
+    String gameId,
+    String content,
+  ) async {
+    return CommunityPost(
+      id: '1',
+      username: 'User',
+      content: content,
+      createdAt: DateTime.now(),
+    );
+  }
+
+  @override
+  Future<void> banUser(String userId) async {}
+
+  @override
+  Future<void> unbanUser(String userId) async {}
+
+  @override
+  Future<void> giftGame(String userId, String gameId) async {}
+
+  @override
+  Future<void> deletePost(String postId) async {}
 }
 
 class ArrayListGameRepository implements GameRepository {
@@ -403,4 +460,32 @@ class ArrayListGameRepository implements GameRepository {
       releaseDate: game.releaseDate,
     );
   }
+
+  @override
+  Future<List<CommunityPost>> listCommunityPosts(String gameId) async => [];
+
+  @override
+  Future<CommunityPost> createCommunityPost(
+    String gameId,
+    String content,
+  ) async {
+    return CommunityPost(
+      id: '1',
+      username: 'User',
+      content: content,
+      createdAt: DateTime.now(),
+    );
+  }
+
+  @override
+  Future<void> banUser(String userId) async {}
+
+  @override
+  Future<void> unbanUser(String userId) async {}
+
+  @override
+  Future<void> giftGame(String userId, String gameId) async {}
+
+  @override
+  Future<void> deletePost(String postId) async {}
 }

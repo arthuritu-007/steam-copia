@@ -59,16 +59,20 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
               AspectRatio(
                 aspectRatio: 16 / 9,
                 child: Container(
-                  color: Colors.black.withOpacity(0.5),
+                  color: Colors.black.withAlpha(128),
                   child: Center(
                     child: Text(
                       g.title,
-                      style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white24),
+                      style: const TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white24,
+                      ),
                     ),
                   ),
                 ),
               ),
-              
+
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -76,22 +80,37 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
                   children: [
                     Text(
                       g.title,
-                      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       g.shortDescription,
-                      style: const TextStyle(color: Color(0xFF66C0F4), fontSize: 14),
+                      style: const TextStyle(
+                        color: Color(0xFF66C0F4),
+                        fontSize: 14,
+                      ),
                     ),
                     const SizedBox(height: 20),
                     const Text(
                       'DESCRIPCIÓN',
-                      style: TextStyle(color: Colors.white54, fontSize: 12, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        color: Colors.white54,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       g.longDescription,
-                      style: const TextStyle(color: Colors.white70, fontSize: 14, height: 1.5),
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                        height: 1.5,
+                      ),
                     ),
                     const SizedBox(height: 24),
                     DefaultTabController(
@@ -111,7 +130,14 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
                             height: 400,
                             child: TabBarView(
                               children: [
-                                _buildPurchaseSection(g, isFree, isOwned, isInCart, auth, cart),
+                                _buildPurchaseSection(
+                                  g,
+                                  isFree,
+                                  isOwned,
+                                  isInCart,
+                                  auth,
+                                  cart,
+                                ),
                                 _CommunitySection(gameId: g.id),
                               ],
                             ),
@@ -129,7 +155,14 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
     );
   }
 
-  Widget _buildPurchaseSection(GameDetails g, bool isFree, bool isOwned, bool isInCart, AuthProvider auth, CartProvider cart) {
+  Widget _buildPurchaseSection(
+    GameDetails g,
+    bool isFree,
+    bool isOwned,
+    bool isInCart,
+    AuthProvider auth,
+    CartProvider cart,
+  ) {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(vertical: 20),
       child: Container(
@@ -144,39 +177,70 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('PRECIO', style: TextStyle(color: Colors.white54, fontSize: 10)),
+                const Text(
+                  'PRECIO',
+                  style: TextStyle(color: Colors.white54, fontSize: 10),
+                ),
                 Text(
-                  isFree ? 'GRATIS' : '${g.currency} ${(g.priceCents / 100).toStringAsFixed(2)}',
-                  style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                  isFree
+                      ? 'GRATIS'
+                      : '${g.currency} ${(g.priceCents / 100).toStringAsFixed(2)}',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
             if (isOwned)
-              const Text('EN TU BIBLIOTECA', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold))
+              const Text(
+                'EN TU BIBLIOTECA',
+                style: TextStyle(
+                  color: Colors.green,
+                  fontWeight: FontWeight.bold,
+                ),
+              )
             else if (isInCart)
-              const Text('EN EL CARRITO', style: TextStyle(color: Color(0xFF66C0F4), fontWeight: FontWeight.bold))
+              const Text(
+                'EN EL CARRITO',
+                style: TextStyle(
+                  color: Color(0xFF66C0F4),
+                  fontWeight: FontWeight.bold,
+                ),
+              )
             else
               ElevatedButton(
                 onPressed: () {
                   if (!auth.isLoggedIn) {
-                    Navigator.of(context).push(MaterialPageRoute(builder: (_) => LoginScreen(onLoggedIn: () => Navigator.pop(context))));
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => LoginScreen(
+                          onLoggedIn: () => Navigator.pop(context),
+                        ),
+                      ),
+                    );
                   } else {
-                    cart.addItem(GameSummary(
-                      id: g.id,
-                      slug: g.slug,
-                      title: g.title,
-                      shortDescription: g.shortDescription,
-                      priceCents: g.priceCents,
-                      currency: g.currency,
-                      releaseDate: g.releaseDate,
-                      headerImageUrl: g.headerImageUrl,
-                    ));
+                    cart.addItem(
+                      GameSummary(
+                        id: g.id,
+                        slug: g.slug,
+                        title: g.title,
+                        shortDescription: g.shortDescription,
+                        priceCents: g.priceCents,
+                        currency: g.currency,
+                        releaseDate: g.releaseDate,
+                        headerImageUrl: g.headerImageUrl,
+                      ),
+                    );
                   }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF67c1f5),
                   foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4),
+                  ),
                 ),
                 child: const Text('AÑADIR AL CARRITO'),
               ),
@@ -229,7 +293,10 @@ class _CommunitySectionState extends State<_CommunitySection> {
                       hintText: 'Publica algo en la comunidad...',
                       filled: true,
                       fillColor: Colors.black26,
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(4), borderSide: BorderSide.none),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(4),
+                        borderSide: BorderSide.none,
+                      ),
                     ),
                     maxLines: 2,
                   ),
@@ -239,11 +306,16 @@ class _CommunitySectionState extends State<_CommunitySection> {
                   onPressed: () async {
                     if (_postController.text.trim().isEmpty) return;
                     try {
-                      await RepositoryProvider.games.createCommunityPost(widget.gameId, _postController.text.trim());
+                      await RepositoryProvider.games.createCommunityPost(
+                        widget.gameId,
+                        _postController.text.trim(),
+                      );
                       _postController.clear();
                       _reload();
                     } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(SnackBar(content: Text(e.toString())));
                     }
                   },
                   icon: const Icon(Icons.send, color: Color(0xFF66C0F4)),
@@ -254,7 +326,10 @@ class _CommunitySectionState extends State<_CommunitySection> {
         else
           const Padding(
             padding: EdgeInsets.all(16.0),
-            child: Text('Inicia sesión para participar en la comunidad', style: TextStyle(color: Colors.white54)),
+            child: Text(
+              'Inicia sesión para participar en la comunidad',
+              style: TextStyle(color: Colors.white54),
+            ),
           ),
         Expanded(
           child: FutureBuilder<List<CommunityPost>>(
@@ -265,7 +340,9 @@ class _CommunitySectionState extends State<_CommunitySection> {
               }
               final posts = snapshot.data ?? [];
               if (posts.isEmpty) {
-                return const Center(child: Text('No hay publicaciones aún. ¡Sé el primero!'));
+                return const Center(
+                  child: Text('No hay publicaciones aún. ¡Sé el primero!'),
+                );
               }
               return ListView.builder(
                 itemCount: posts.length,
@@ -282,15 +359,27 @@ class _CommunitySectionState extends State<_CommunitySection> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(p.username, style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF66C0F4))),
+                              Text(
+                                p.username,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF66C0F4),
+                                ),
+                              ),
                               Text(
                                 '${p.createdAt.day}/${p.createdAt.month}/${p.createdAt.year} ${p.createdAt.hour}:${p.createdAt.minute.toString().padLeft(2, '0')}',
-                                style: const TextStyle(fontSize: 10, color: Colors.white54),
+                                style: const TextStyle(
+                                  fontSize: 10,
+                                  color: Colors.white54,
+                                ),
                               ),
                             ],
                           ),
                           const SizedBox(height: 8),
-                          Text(p.content, style: const TextStyle(color: Colors.white)),
+                          Text(
+                            p.content,
+                            style: const TextStyle(color: Colors.white),
+                          ),
                         ],
                       ),
                     ),

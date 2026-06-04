@@ -137,7 +137,7 @@ class _HomeShellState extends State<HomeShell> {
       onPressed: () => setState(() => _index = index),
       style: TextButton.styleFrom(
         foregroundColor: selected ? Colors.white : Colors.grey,
-        backgroundColor: selected ? Colors.white.withOpacity(0.1) : null,
+        backgroundColor: selected ? Colors.white.withAlpha(26) : null,
         shape: const RoundedRectangleBorder(),
       ),
       child: Text(

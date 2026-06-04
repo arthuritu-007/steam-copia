@@ -96,7 +96,7 @@ class _CartScreenState extends State<CartScreen> {
                 Text(game.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
-                  decoration: BoxDecoration(color: Colors.blue.withOpacity(0.2), borderRadius: BorderRadius.circular(2)),
+                  decoration: BoxDecoration(color: Colors.blue.withAlpha(51), borderRadius: BorderRadius.circular(2)),
                   child: Text(game.shortDescription, style: const TextStyle(color: Colors.blue, fontSize: 10)),
                 ),
               ],

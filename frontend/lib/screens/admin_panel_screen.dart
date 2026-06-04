@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/api/models.dart';
 import 'package:frontend/api/repository_provider.dart';
 
 class AdminPanelScreen extends StatefulWidget {

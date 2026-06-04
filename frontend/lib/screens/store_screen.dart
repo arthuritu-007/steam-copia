@@ -163,7 +163,7 @@ class _StoreScreenState extends State<StoreScreen> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: isActive ? Colors.white.withOpacity(0.1) : Colors.transparent,
+                color: isActive ? Colors.white.withAlpha(26) : Colors.transparent,
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Text(
@@ -189,7 +189,7 @@ class _StoreScreenState extends State<StoreScreen> {
         borderRadius: BorderRadius.circular(4),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withAlpha(77),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -202,7 +202,7 @@ class _StoreScreenState extends State<StoreScreen> {
             child: Container(
               width: double.infinity,
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.5),
+                color: Colors.black.withAlpha(128),
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
               ),
               child: Center(

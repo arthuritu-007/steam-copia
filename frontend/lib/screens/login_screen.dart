@@ -92,7 +92,7 @@ class _LoginScreenState extends State<LoginScreen> {
             Text(
               'CATÁLOGO',
               style: TextStyle(
-                color: Colors.white.withOpacity(0.7),
+                color: Colors.white.withAlpha(179),
                 fontSize: 14,
               ),
             ),
@@ -162,9 +162,9 @@ class _LoginScreenState extends State<LoginScreen> {
       padding: const EdgeInsets.all(12),
       margin: const EdgeInsets.only(bottom: 24),
       decoration: BoxDecoration(
-        color: Colors.red.withOpacity(0.2),
+        color: Colors.red.withAlpha(51),
         borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: Colors.red.withOpacity(0.5)),
+        border: Border.all(color: Colors.red.withAlpha(128)),
       ),
       child: Row(
         children: [
@@ -281,7 +281,7 @@ class _LoginScreenState extends State<LoginScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.2),
+        color: Colors.black.withAlpha(51),
         borderRadius: BorderRadius.circular(4),
       ),
       child: const Column(
