@@ -1,9 +1,8 @@
 #!/bin/bash
 
-# Script to build Flutter web on Netlify
+# Script to build Flutter web on Render/Netlify
 
 FLUTTER_CHANNEL=stable
-FLUTTER_VERSION=3.16.0
 
 # Install Flutter
 if [ ! -d "flutter" ]; then
@@ -21,7 +20,7 @@ flutter config --enable-web
 echo "Building frontend..."
 cd frontend
 flutter pub get
-flutter build web --release --dart-define=API_BASE_URL=$API_BASE_URL
+flutter build web --release --web-renderer html --dart-define=API_BASE_URL=$API_BASE_URL
 cd ..
 
 echo "Build complete!"

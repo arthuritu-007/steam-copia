@@ -1,4 +1,5 @@
 services:
+  # Backend
   - type: web
     name: steam-copia-backend
     env: java
@@ -21,3 +22,17 @@ services:
         value: esta-es-una-clave-secreta-muy-larga-y-segura-de-mas-de-32-caracteres
       - key: JAVA_VERSION
         value: 17
+
+  # Frontend (Static Site)
+  - type: static
+    name: steam-copia-frontend
+    plan: free
+    buildCommand: bash build.sh
+    publishPath: frontend/build/web
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: API_BASE_URL
+        value: https://steam-copia-backend.onrender.com # Cambia esto si el nombre del servicio backend cambia
