@@ -26,10 +26,10 @@ services:
   # Frontend (Static Site)
   - type: web
     name: steam-copia-frontend
-    env: static
+    runtime: static
     plan: free
     buildCommand: bash build.sh
-    publishPath: frontend/build/web
+    staticPublishPath: frontend/build/web
     routes:
       - type: rewrite
         source: /*
