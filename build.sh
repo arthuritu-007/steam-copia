@@ -20,9 +20,9 @@ cd frontend
 flutter clean
 flutter pub get
 
-# 4. Compilar para Web con renderer HTML (más compatible)
+# 4. Compilar para Web
 echo "Compilando frontend..."
-flutter build web --release --web-renderer html --dart-define=API_BASE_URL=$API_BASE_URL
+flutter build web --release --dart-define=API_BASE_URL=$API_BASE_URL
 
 echo "Compilación completada con éxito."
 cd ..
