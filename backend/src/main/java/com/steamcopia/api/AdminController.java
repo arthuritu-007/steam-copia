@@ -50,7 +50,7 @@ public class AdminController {
     AppUser user = users.findById(userId).orElseThrow();
     Game game = games.findById(gameId).orElseThrow();
     
-    if (!userGames.existsByUserIdAndGameId(userId, gameId)) {
+    if (userGames.findByUserAndGame(userId, gameId).isEmpty()) {
       UserGame ug = new UserGame();
       ug.setId(UUID.randomUUID());
       ug.setUser(user);

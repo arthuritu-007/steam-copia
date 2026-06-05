@@ -7,7 +7,6 @@ import com.steamcopia.domain.Game;
 import com.steamcopia.repo.CommunityPostRepository;
 import com.steamcopia.repo.GameRepository;
 import com.steamcopia.security.CurrentUser;
-import com.steamcopia.security.UserPrincipal;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -18,10 +17,12 @@ import org.springframework.web.bind.annotation.*;
 public class CommunityController {
   private final CommunityPostRepository posts;
   private final GameRepository games;
+  private final CurrentUser currentUser;
 
-  public CommunityController(CommunityPostRepository posts, GameRepository games) {
+  public CommunityController(CommunityPostRepository posts, GameRepository games, CurrentUser currentUser) {
     this.posts = posts;
     this.games = games;
+    this.currentUser = currentUser;
   }
 
   @GetMapping("/{gameId}")
@@ -39,11 +40,10 @@ public class CommunityController {
   @PostMapping("/{gameId}")
   public CommunityPostDto createPost(
       @PathVariable UUID gameId,
-      @RequestBody String content,
-      @CurrentUser UserPrincipal principal
+      @RequestBody String content
   ) {
     Game game = games.findById(gameId).orElseThrow();
-    AppUser user = principal.getUser();
+    AppUser user = currentUser.require();
     
     if (user.isBanned()) {
       throw new RuntimeException("Usuario baneado");

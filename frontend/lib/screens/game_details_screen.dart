@@ -213,9 +213,7 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
                   if (!auth.isLoggedIn) {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (_) => LoginScreen(
-                          onLoggedIn: () => Navigator.pop(context),
-                        ),
+                        builder: (_) => const LoginScreen(),
                       ),
                     );
                   } else {
@@ -291,17 +289,18 @@ class _CommunitySectionState extends State<_CommunitySection> {
                 IconButton(
                   onPressed: () async {
                     if (_postController.text.trim().isEmpty) return;
+                    final messenger = ScaffoldMessenger.of(context);
                     try {
                       await RepositoryProvider.games.createCommunityPost(
                         widget.gameId,
                         _postController.text.trim(),
                       );
+                      if (!mounted) return;
                       _postController.clear();
                       _reload();
                     } catch (e) {
-                      ScaffoldMessenger.of(
-                        context,
-                      ).showSnackBar(SnackBar(content: Text(e.toString())));
+                      if (!mounted) return;
+                      messenger.showSnackBar(SnackBar(content: Text(e.toString())));
                     }
                   },
                   icon: Icon(Icons.send, color: cs.primary),

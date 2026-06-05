@@ -1,20 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:frontend/api/api_client.dart';
 import 'package:frontend/api/auth_provider.dart';
-import 'package:frontend/auth/token_store.dart';
 
 class LoginScreen extends StatefulWidget {
-  final VoidCallback onLoggedIn;
-  const LoginScreen({super.key, required this.onLoggedIn});
+  const LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _api = ApiClient();
-  final _tokens = TokenStore();
   final _email = TextEditingController();
   final _password = TextEditingController();
   final _displayName = TextEditingController();
@@ -37,50 +32,41 @@ class _LoginScreenState extends State<LoginScreen> {
       _error = null;
     });
 
-    // MOCK LOGIN: Forzado para funcionar siempre con los datos de prueba
-    await Future.delayed(const Duration(seconds: 1));
-    final username = _email.text.trim();
-    if (username.isNotEmpty) {
-      final role = username.toLowerCase() == 'admin' ? 'ADMIN' : 'USER';
-      context.read<AuthProvider>().login(username, role);
-      if (mounted) {
-        setState(() => _loading = false);
-      }
-      widget.onLoggedIn();
-      return;
-    }
-
-    if (mounted) {
-      setState(() {
-        _loading = false;
-        _error = 'Ingresa un usuario';
-      });
-    }
-
-    // El código original de la API queda debajo por si se necesita en el futuro
-    /*
     try {
-      AuthResponse res;
+      final email = _email.text.trim();
+      final password = _password.text;
+
+      if (email.isEmpty) {
+        setState(() => _error = 'Ingresa tu correo electrónico');
+        return;
+      }
+      if (password.isEmpty) {
+        setState(() => _error = 'Ingresa tu contraseña');
+        return;
+      }
+      if (!_isLogin && _displayName.text.trim().isEmpty) {
+        setState(() => _error = 'Ingresa un nombre de usuario');
+        return;
+      }
+
+      final auth = context.read<AuthProvider>();
       if (_isLogin) {
-        res = await _api.login(
-          email: _email.text,
-          password: _password.text,
-        );
+        await auth.login(email: email, password: password);
       } else {
-        res = await _api.register(
-          email: _email.text,
-          displayName: _displayName.text,
-          password: _password.text,
+        await auth.register(
+          email: email,
+          displayName: _displayName.text.trim(),
+          password: password,
         );
       }
-      await _tokens.setToken(res.accessToken);
-      widget.onLoggedIn();
+
+      if (!mounted) return;
+      Navigator.of(context).pop();
     } catch (e) {
       setState(() => _error = e.toString());
     } finally {
       if (mounted) setState(() => _loading = false);
     }
-    */
   }
 
   @override
@@ -139,11 +125,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   _buildTextField(_displayName, 'Elige un nombre único'),
                   const SizedBox(height: 16),
                 ],
-                _buildLabel(_isLogin ? 'Nombre de usuario' : 'Correo electrónico'),
-                _buildTextField(_email, _isLogin ? 'Tu usuario' : 'tu@correo.com'),
+                _buildLabel('Correo electrónico'),
+                _buildTextField(_email, 'tu@correo.com'),
                 const SizedBox(height: 16),
                 _buildLabel('Contraseña'),
-                _buildTextField(_password, _isLogin ? '••••••••' : 'Mínimo 4 caracteres', obscure: true),
+                _buildTextField(_password, 'Mínimo 8 caracteres', obscure: true),
                 const SizedBox(height: 24),
                 _buildPrimaryButton(),
                 const SizedBox(height: 32),
@@ -303,9 +289,7 @@ class _LoginScreenState extends State<LoginScreen> {
             style: TextStyle(color: Colors.white38, fontSize: 11, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 8),
-          Text('admin / admin123', style: TextStyle(color: Colors.white38, fontSize: 11)),
-          Text('gamer1 / pass123', style: TextStyle(color: Colors.white38, fontSize: 11)),
-          Text('jugador / 1234', style: TextStyle(color: Colors.white38, fontSize: 11)),
+          Text('admin@local / adminadmin', style: TextStyle(color: Colors.white38, fontSize: 11)),
         ],
       ),
     );

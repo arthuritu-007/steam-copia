@@ -182,11 +182,7 @@ class _CartScreenState extends State<CartScreen> {
                 if (!auth.isLoggedIn) {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (_) => LoginScreen(
-                        onLoggedIn: () {
-                          Navigator.pop(context);
-                        },
-                      ),
+                      builder: (_) => const LoginScreen(),
                     ),
                   );
                 } else {

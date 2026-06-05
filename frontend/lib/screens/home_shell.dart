@@ -72,7 +72,7 @@ class _HomeShellState extends State<HomeShell> {
               ),
             ),
             IconButton(
-              onPressed: () => auth.logout(),
+              onPressed: () async => auth.logout(),
               icon: const Icon(Icons.logout, size: 18, color: Colors.white54),
             ),
           ] else
@@ -80,11 +80,7 @@ class _HomeShellState extends State<HomeShell> {
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (_) => LoginScreen(
-                      onLoggedIn: () {
-                        Navigator.pop(context);
-                      },
-                    ),
+                    builder: (_) => const LoginScreen(),
                   ),
                 );
               },
@@ -181,11 +177,7 @@ class LoginPlaceholder extends StatelessWidget {
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (_) => LoginScreen(
-                    onLoggedIn: () {
-                      Navigator.pop(context);
-                    },
-                  ),
+                  builder: (_) => const LoginScreen(),
                 ),
               );
             },

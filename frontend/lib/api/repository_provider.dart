@@ -4,7 +4,7 @@ import 'game_repository.dart';
 enum RepositoryMode { api, hardcode, arraylist }
 
 class RepositoryProvider {
-  static RepositoryMode mode = RepositoryMode.hardcode;
+  static RepositoryMode mode = RepositoryMode.api;
   static final ApiClient _api = ApiClient();
 
   static GameRepository get games {

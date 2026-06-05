@@ -81,6 +81,15 @@ class ApiClient {
     return AuthResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
   }
 
+  Future<UserDto> me() async {
+    final res = await _http.get(
+      _uri('/api/me'),
+      headers: await _headers(auth: true),
+    );
+    if (res.statusCode >= 400) throw _errorFrom(res);
+    return UserDto.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
+  }
+
   Future<List<GameSummary>> listGames({String? q}) async {
     final query = <String, String>{};
     if (q != null && q.trim().isNotEmpty) query['q'] = q.trim();
@@ -108,7 +117,7 @@ class ApiClient {
   Future<List<CommunityPost>> listCommunityPosts(String gameId) async {
     final res = await _http.get(
       _uri('/api/community/$gameId'),
-      headers: await _headers(),
+      headers: await _headers(auth: true),
     );
     if (res.statusCode >= 400) throw _errorFrom(res);
     final list = jsonDecode(res.body) as List<dynamic>;
@@ -119,7 +128,7 @@ class ApiClient {
     final res = await _http.post(
       _uri('/api/community/$gameId'),
       headers: await _headers(auth: true),
-      body: content,
+      body: jsonEncode(content),
     );
     if (res.statusCode >= 400) throw _errorFrom(res);
     return CommunityPost.fromJson(jsonDecode(res.body) as Map<String, dynamic>);

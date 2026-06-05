@@ -257,7 +257,7 @@ class _StoreScreenState extends State<StoreScreen> {
             ),
             const SizedBox(width: 4),
             Text(
-              category == null ? 'Categoría' : category,
+              category ?? 'Categoría',
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const Spacer(),
