@@ -4,7 +4,8 @@ CREATE TABLE app_user (
   display_name VARCHAR(80) NOT NULL,
   password_hash VARCHAR(200) NOT NULL,
   role VARCHAR(20) NOT NULL,
-  created_at TIMESTAMP WITH TIME ZONE NOT NULL
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+  is_banned BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE game (
