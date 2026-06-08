@@ -57,19 +57,37 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
             children: [
               AspectRatio(
                 aspectRatio: 16 / 9,
-                child: Container(
-                  color: Colors.black.withAlpha(128),
-                  child: Center(
-                    child: Text(
-                      g.title,
-                      style: const TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white24,
+                child: g.headerImageUrl != null && g.headerImageUrl!.isNotEmpty
+                    ? Image.network(
+                        g.headerImageUrl!,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Container(
+                          color: Colors.black,
+                          child: Center(
+                            child: Text(
+                              g.title,
+                              style: const TextStyle(
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white24,
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    : Container(
+                        color: Colors.black.withAlpha(128),
+                        child: Center(
+                          child: Text(
+                            g.title,
+                            style: const TextStyle(
+                              fontSize: 32,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white24,
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                ),
               ),
 
               Padding(
