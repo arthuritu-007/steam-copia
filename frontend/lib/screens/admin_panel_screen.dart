@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/api/api_client.dart';
 import 'package:frontend/api/repository_provider.dart';
 
 class AdminPanelScreen extends StatefulWidget {
@@ -14,12 +15,26 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
   final _postIdController = TextEditingController();
   final _giftUserIdController = TextEditingController();
 
+  // Create game controllers
+  final _newGameTitleController = TextEditingController();
+  final _newGameSlugController = TextEditingController();
+  final _newGameShortDescController = TextEditingController();
+  final _newGameLongDescController = TextEditingController();
+  final _newGamePriceController = TextEditingController();
+  final _newGameImageController = TextEditingController();
+
   @override
   void dispose() {
     _userIdController.dispose();
     _gameIdController.dispose();
     _postIdController.dispose();
     _giftUserIdController.dispose();
+    _newGameTitleController.dispose();
+    _newGameSlugController.dispose();
+    _newGameShortDescController.dispose();
+    _newGameLongDescController.dispose();
+    _newGamePriceController.dispose();
+    _newGameImageController.dispose();
     super.dispose();
   }
 
@@ -183,6 +198,74 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
                           ],
                         ),
                       ),
+                      SizedBox(
+                        width: isWide ? constraints.maxWidth : cardWidth,
+                        child: _buildSection(
+                          context: context,
+                          title: 'Agregar juego',
+                          subtitle: 'Crea un nuevo juego en la tienda',
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: TextField(
+                                    controller: _newGameTitleController,
+                                    decoration: const InputDecoration(labelText: 'Título'),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: TextField(
+                                    controller: _newGameSlugController,
+                                    decoration: const InputDecoration(labelText: 'Slug (ej: elden-ring)'),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            TextField(
+                              controller: _newGameShortDescController,
+                              decoration: const InputDecoration(labelText: 'Descripción corta'),
+                            ),
+                            const SizedBox(height: 12),
+                            TextField(
+                              controller: _newGameLongDescController,
+                              decoration: const InputDecoration(labelText: 'Descripción larga'),
+                              maxLines: 3,
+                            ),
+                            const SizedBox(height: 12),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: TextField(
+                                    controller: _newGamePriceController,
+                                    decoration: const InputDecoration(labelText: 'Precio (en centavos, ej: 2999)'),
+                                    keyboardType: TextInputType.number,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: TextField(
+                                    controller: _newGameImageController,
+                                    decoration: const InputDecoration(labelText: 'URL de imagen'),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                onPressed: _createGame,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.green,
+                                ),
+                                child: const Text('Crear juego'),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   );
                 },
@@ -256,6 +339,46 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
         _gameIdController.text,
       );
       _showMsg('Juego regalado con éxito');
+    } catch (e) {
+      _showError(e);
+    }
+  }
+
+  Future<void> _createGame() async {
+    final title = _newGameTitleController.text.trim();
+    final slug = _newGameSlugController.text.trim();
+    final shortDesc = _newGameShortDescController.text.trim();
+    final longDesc = _newGameLongDescController.text.trim();
+    final priceText = _newGamePriceController.text.trim();
+    final imageUrl = _newGameImageController.text.trim();
+
+    if (title.isEmpty || slug.isEmpty || shortDesc.isEmpty || longDesc.isEmpty || priceText.isEmpty) {
+      _showError('Completa todos los campos obligatorios');
+      return;
+    }
+    final price = int.tryParse(priceText);
+    if (price == null || price < 0) {
+      _showError('El precio debe ser un número entero en centavos (ej: 2999)');
+      return;
+    }
+    try {
+      final api = ApiClient();
+      await api.createGame(
+        slug: slug,
+        title: title,
+        shortDescription: shortDesc,
+        longDescription: longDesc,
+        priceCents: price,
+        currency: 'USD',
+        headerImageUrl: imageUrl.isEmpty ? null : imageUrl,
+      );
+      _newGameTitleController.clear();
+      _newGameSlugController.clear();
+      _newGameShortDescController.clear();
+      _newGameLongDescController.clear();
+      _newGamePriceController.clear();
+      _newGameImageController.clear();
+      _showMsg('Juego creado con éxito');
     } catch (e) {
       _showError(e);
     }

@@ -175,4 +175,32 @@ class ApiClient {
     );
     if (res.statusCode >= 400) throw _errorFrom(res);
   }
+
+  Future<GameDetails> createGame({
+    required String slug,
+    required String title,
+    required String shortDescription,
+    required String longDescription,
+    required int priceCents,
+    required String currency,
+    String? headerImageUrl,
+    bool published = true,
+  }) async {
+    final res = await _http.post(
+      _uri('/api/admin/games'),
+      headers: await _headers(auth: true),
+      body: jsonEncode({
+        'slug': slug,
+        'title': title,
+        'shortDescription': shortDescription,
+        'longDescription': longDescription,
+        'priceCents': priceCents,
+        'currency': currency,
+        'headerImageUrl': headerImageUrl,
+        'published': published,
+      }),
+    );
+    if (res.statusCode >= 400) throw _errorFrom(res);
+    return GameDetails.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
+  }
 }
