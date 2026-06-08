@@ -58,12 +58,12 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
               AspectRatio(
                 aspectRatio: 16 / 9,
                 child: g.headerImageUrl != null && g.headerImageUrl!.isNotEmpty
-                    ? Image.network(
-                        g.headerImageUrl!,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Container(
-                          color: Colors.black,
-                          child: Center(
+                    ? Container(
+                        color: Colors.black,
+                        child: Image.network(
+                          g.headerImageUrl!,
+                          fit: BoxFit.contain,
+                          errorBuilder: (_, __, ___) => Center(
                             child: Text(
                               g.title,
                               style: const TextStyle(
