@@ -426,12 +426,14 @@ class HardcodedGameRepository implements GameRepository {
   @override
   Future<CommunityPost> createCommunityPost(
     String gameId,
-    String content,
-  ) async {
+    String content, {
+    String? imageUrl,
+  }) async {
     final post = CommunityPost(
       id: 'p-${DateTime.now().microsecondsSinceEpoch}',
       username: 'User',
       content: content,
+      imageUrl: imageUrl,
       createdAt: DateTime.now(),
     );
     final list = _postsByGameId.putIfAbsent(gameId, () => []);
@@ -530,12 +532,14 @@ class ArrayListGameRepository implements GameRepository {
   @override
   Future<CommunityPost> createCommunityPost(
     String gameId,
-    String content,
-  ) async {
+    String content, {
+    String? imageUrl,
+  }) async {
     return CommunityPost(
       id: '1',
       username: 'User',
       content: content,
+      imageUrl: imageUrl,
       createdAt: DateTime.now(),
     );
   }
