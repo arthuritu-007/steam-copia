@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:frontend/api/api_client.dart';
 import 'package:frontend/api/repository_provider.dart';
 
@@ -22,6 +24,8 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
   final _newGameLongDescController = TextEditingController();
   final _newGamePriceController = TextEditingController();
   final _newGameImageController = TextEditingController();
+  String? _pickedImageUrl;
+  String? _pickedImageName;
 
   @override
   void dispose() {
@@ -245,9 +249,35 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
                                 ),
                                 const SizedBox(width: 12),
                                 Expanded(
-                                  child: TextField(
-                                    controller: _newGameImageController,
-                                    decoration: const InputDecoration(labelText: 'URL de imagen'),
+                                  child: GestureDetector(
+                                    onTap: _pickImage,
+                                    child: Container(
+                                      height: 56,
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFF32353C),
+                                        borderRadius: BorderRadius.circular(4),
+                                        border: Border.all(color: Colors.white10),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                                      child: Row(
+                                        children: [
+                                          const Icon(Icons.image, color: Colors.white54, size: 20),
+                                          const SizedBox(width: 8),
+                                          Expanded(
+                                            child: Text(
+                                              _pickedImageName ?? 'Seleccionar imagen',
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                color: _pickedImageName != null ? Colors.white : Colors.white38,
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                          ),
+                                          if (_pickedImageName != null)
+                                            const Icon(Icons.check_circle, color: Colors.green, size: 16),
+                                        ],
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ],
@@ -344,13 +374,39 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
     }
   }
 
+  Future<void> _pickImage() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.image,
+      withData: true,
+    );
+    if (result == null || result.files.isEmpty) return;
+    final file = result.files.first;
+    if (file.bytes == null) return;
+
+    final supabase = Supabase.instance.client;
+    final fileName = '${DateTime.now().millisecondsSinceEpoch}_${file.name}';
+    try {
+      await supabase.storage.from('game-images').uploadBinary(
+        fileName,
+        file.bytes!,
+        fileOptions: FileOptions(contentType: file.extension != null ? 'image/${file.extension}' : 'image/jpeg'),
+      );
+      final url = supabase.storage.from('game-images').getPublicUrl(fileName);
+      setState(() {
+        _pickedImageUrl = url;
+        _pickedImageName = file.name;
+      });
+    } catch (e) {
+      _showError('Error al subir imagen: $e');
+    }
+  }
+
   Future<void> _createGame() async {
     final title = _newGameTitleController.text.trim();
     final slug = _newGameSlugController.text.trim();
     final shortDesc = _newGameShortDescController.text.trim();
     final longDesc = _newGameLongDescController.text.trim();
     final priceText = _newGamePriceController.text.trim();
-    final imageUrl = _newGameImageController.text.trim();
 
     if (title.isEmpty || slug.isEmpty || shortDesc.isEmpty || longDesc.isEmpty || priceText.isEmpty) {
       _showError('Completa todos los campos obligatorios');
@@ -370,7 +426,7 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
         longDescription: longDesc,
         priceCents: price,
         currency: 'USD',
-        headerImageUrl: imageUrl.isEmpty ? null : imageUrl,
+        headerImageUrl: _pickedImageUrl,
       );
       _newGameTitleController.clear();
       _newGameSlugController.clear();
@@ -378,6 +434,10 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
       _newGameLongDescController.clear();
       _newGamePriceController.clear();
       _newGameImageController.clear();
+      setState(() {
+        _pickedImageUrl = null;
+        _pickedImageName = null;
+      });
       _showMsg('Juego creado con éxito');
     } catch (e) {
       _showError(e);
