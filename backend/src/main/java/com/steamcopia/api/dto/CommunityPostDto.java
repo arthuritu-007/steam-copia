@@ -7,5 +7,6 @@ public record CommunityPostDto(
     UUID id,
     String username,
     String content,
+    String imageUrl,
     Instant createdAt
 ) {}

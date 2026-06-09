@@ -27,6 +27,9 @@ public class CommunityPost {
   @Column(nullable = false, columnDefinition = "TEXT")
   private String content;
 
+  @Column(name = "image_url")
+  private String imageUrl;
+
   @Column(name = "created_at", nullable = false)
   private Instant createdAt;
 
@@ -41,6 +44,9 @@ public class CommunityPost {
 
   public String getContent() { return content; }
   public void setContent(String content) { this.content = content; }
+
+  public String getImageUrl() { return imageUrl; }
+  public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 
   public Instant getCreatedAt() { return createdAt; }
   public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }

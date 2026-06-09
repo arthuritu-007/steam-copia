@@ -32,6 +32,7 @@ public class CommunityController {
             p.getId(),
             p.getUser().getDisplayName(),
             p.getContent(),
+            p.getImageUrl(),
             p.getCreatedAt()
         ))
         .toList();
@@ -40,11 +41,11 @@ public class CommunityController {
   @PostMapping("/{gameId}")
   public CommunityPostDto createPost(
       @PathVariable UUID gameId,
-      @RequestBody String content
+      @RequestBody CreatePostRequest body
   ) {
     Game game = games.findById(gameId).orElseThrow();
     AppUser user = currentUser.require();
-    
+
     if (user.isBanned()) {
       throw new RuntimeException("Usuario baneado");
     }
@@ -53,16 +54,20 @@ public class CommunityController {
     post.setId(UUID.randomUUID());
     post.setGame(game);
     post.setUser(user);
-    post.setContent(content);
+    post.setContent(body.content());
+    post.setImageUrl(body.imageUrl());
     post.setCreatedAt(Instant.now());
-    
+
     posts.save(post);
-    
+
     return new CommunityPostDto(
         post.getId(),
         user.getDisplayName(),
         post.getContent(),
+        post.getImageUrl(),
         post.getCreatedAt()
     );
   }
+
+  record CreatePostRequest(String content, String imageUrl) {}
 }
