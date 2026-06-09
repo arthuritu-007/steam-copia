@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:frontend/api/models.dart';
 import 'package:frontend/api/repository_provider.dart';
 import 'package:frontend/api/cart_provider.dart';
@@ -269,6 +271,9 @@ class _CommunitySection extends StatefulWidget {
 class _CommunitySectionState extends State<_CommunitySection> {
   final _postController = TextEditingController();
   Future<List<CommunityPost>>? _future;
+  String? _pickedImageUrl;
+  String? _pickedImageName;
+  bool _uploadingImage = false;
 
   @override
   void initState() {
@@ -282,6 +287,33 @@ class _CommunitySectionState extends State<_CommunitySection> {
     });
   }
 
+  Future<void> _pickImage() async {
+    final result = await FilePicker.platform.pickFiles(type: FileType.image, withData: true);
+    if (result == null || result.files.isEmpty) return;
+    final file = result.files.first;
+    if (file.bytes == null) return;
+    setState(() => _uploadingImage = true);
+    try {
+      final supabase = Supabase.instance.client;
+      final fileName = '${DateTime.now().millisecondsSinceEpoch}_${file.name}';
+      await supabase.storage.from('game-images').uploadBinary(
+        fileName, file.bytes!,
+        fileOptions: FileOptions(contentType: 'image/${file.extension ?? 'jpeg'}'),
+      );
+      final url = supabase.storage.from('game-images').getPublicUrl(fileName);
+      setState(() {
+        _pickedImageUrl = url;
+        _pickedImageName = file.name;
+      });
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error al subir imagen: $e')));
+      }
+    } finally {
+      setState(() => _uploadingImage = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
@@ -292,36 +324,63 @@ class _CommunitySectionState extends State<_CommunitySection> {
         if (auth.isLoggedIn)
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16),
-            child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: TextField(
-                    controller: _postController,
-                    decoration: const InputDecoration(
-                      hintText: 'Publica algo en la comunidad...',
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _postController,
+                        decoration: const InputDecoration(
+                          hintText: 'Publica algo en la comunidad...',
+                        ),
+                        maxLines: 2,
+                      ),
                     ),
-                    maxLines: 2,
-                  ),
+                    const SizedBox(width: 8),
+                    IconButton(
+                      onPressed: () async {
+                        if (_postController.text.trim().isEmpty && _pickedImageUrl == null) return;
+                        final messenger = ScaffoldMessenger.of(context);
+                        try {
+                          await RepositoryProvider.games.createCommunityPost(
+                            widget.gameId,
+                            _postController.text.trim(),
+                            imageUrl: _pickedImageUrl,
+                          );
+                          if (!mounted) return;
+                          _postController.clear();
+                          setState(() { _pickedImageUrl = null; _pickedImageName = null; });
+                          _reload();
+                        } catch (e) {
+                          if (!mounted) return;
+                          messenger.showSnackBar(SnackBar(content: Text(e.toString())));
+                        }
+                      },
+                      icon: Icon(Icons.send, color: cs.primary),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 8),
-                IconButton(
-                  onPressed: () async {
-                    if (_postController.text.trim().isEmpty) return;
-                    final messenger = ScaffoldMessenger.of(context);
-                    try {
-                      await RepositoryProvider.games.createCommunityPost(
-                        widget.gameId,
-                        _postController.text.trim(),
-                      );
-                      if (!mounted) return;
-                      _postController.clear();
-                      _reload();
-                    } catch (e) {
-                      if (!mounted) return;
-                      messenger.showSnackBar(SnackBar(content: Text(e.toString())));
-                    }
-                  },
-                  icon: Icon(Icons.send, color: cs.primary),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    _uploadingImage
+                        ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                        : TextButton.icon(
+                            onPressed: _pickImage,
+                            icon: const Icon(Icons.image_outlined, size: 16),
+                            label: Text(_pickedImageName ?? 'Agregar imagen'),
+                            style: TextButton.styleFrom(foregroundColor: cs.primary),
+                          ),
+                    if (_pickedImageName != null) ...[
+                      const SizedBox(width: 8),
+                      GestureDetector(
+                        onTap: () => setState(() { _pickedImageUrl = null; _pickedImageName = null; }),
+                        child: const Icon(Icons.close, size: 16, color: Colors.white38),
+                      ),
+                    ],
+                  ],
                 ),
               ],
             ),
@@ -383,6 +442,17 @@ class _CommunitySectionState extends State<_CommunitySection> {
                             p.content,
                             style: const TextStyle(color: Colors.white),
                           ),
+                          if (p.imageUrl != null && p.imageUrl!.isNotEmpty) ...[
+                            const SizedBox(height: 8),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(4),
+                              child: Image.network(
+                                p.imageUrl!,
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                     ),

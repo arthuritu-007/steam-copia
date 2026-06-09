@@ -124,12 +124,14 @@ class CommunityPost {
   final String id;
   final String username;
   final String content;
+  final String? imageUrl;
   final DateTime createdAt;
 
   CommunityPost({
     required this.id,
     required this.username,
     required this.content,
+    this.imageUrl,
     required this.createdAt,
   });
 
@@ -138,6 +140,7 @@ class CommunityPost {
       id: json['id'] as String,
       username: json['username'] as String,
       content: json['content'] as String,
+      imageUrl: json['imageUrl'] as String?,
       createdAt: DateTime.parse(json['createdAt'] as String),
     );
   }

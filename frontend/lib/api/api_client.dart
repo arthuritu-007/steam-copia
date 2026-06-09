@@ -124,11 +124,11 @@ class ApiClient {
     return list.map((e) => CommunityPost.fromJson(e as Map<String, dynamic>)).toList();
   }
 
-  Future<CommunityPost> createCommunityPost(String gameId, String content) async {
+  Future<CommunityPost> createCommunityPost(String gameId, String content, {String? imageUrl}) async {
     final res = await _http.post(
       _uri('/api/community/$gameId'),
       headers: await _headers(auth: true),
-      body: jsonEncode(content),
+      body: jsonEncode({'content': content, 'imageUrl': imageUrl}),
     );
     if (res.statusCode >= 400) throw _errorFrom(res);
     return CommunityPost.fromJson(jsonDecode(res.body) as Map<String, dynamic>);

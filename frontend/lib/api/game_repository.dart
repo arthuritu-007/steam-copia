@@ -6,7 +6,7 @@ abstract class GameRepository {
   Future<GameDetails> getGameDetails(String slug);
   // Community
   Future<List<CommunityPost>> listCommunityPosts(String gameId);
-  Future<CommunityPost> createCommunityPost(String gameId, String content);
+  Future<CommunityPost> createCommunityPost(String gameId, String content, {String? imageUrl});
   // Admin
   Future<void> banUser(String userId);
   Future<void> unbanUser(String userId);
@@ -29,8 +29,8 @@ class ApiGameRepository implements GameRepository {
       _api.listCommunityPosts(gameId);
 
   @override
-  Future<CommunityPost> createCommunityPost(String gameId, String content) =>
-      _api.createCommunityPost(gameId, content);
+  Future<CommunityPost> createCommunityPost(String gameId, String content, {String? imageUrl}) =>
+      _api.createCommunityPost(gameId, content, imageUrl: imageUrl);
 
   @override
   Future<void> banUser(String userId) => _api.banUser(userId);
