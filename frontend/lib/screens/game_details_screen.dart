@@ -410,51 +410,85 @@ class _CommunitySectionState extends State<_CommunitySection> {
                 itemCount: posts.length,
                 itemBuilder: (context, index) {
                   final p = posts[index];
-                  return Card(
-                    color: const Color(0xFF2A475E),
-                    margin: const EdgeInsets.symmetric(vertical: 4),
-                    child: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1B2838),
+                      borderRadius: BorderRadius.circular(4),
+                      border: Border.all(color: Colors.white10),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (p.imageUrl != null && p.imageUrl!.isNotEmpty)
+                          ClipRRect(
+                            borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+                            child: Image.network(
+                              p.imageUrl!,
+                              width: double.infinity,
+                              height: 180,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+                            ),
+                          ),
+                        Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                p.username,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF66C0F4),
+                              if (p.content.isNotEmpty)
+                                Text(
+                                  p.content,
+                                  style: const TextStyle(color: Colors.white, fontSize: 13),
                                 ),
-                              ),
-                              Text(
-                                '${p.createdAt.day}/${p.createdAt.month}/${p.createdAt.year} ${p.createdAt.hour}:${p.createdAt.minute.toString().padLeft(2, '0')}',
-                                style: const TextStyle(
-                                  fontSize: 10,
-                                  color: Colors.white54,
-                                ),
+                              const SizedBox(height: 10),
+                              Row(
+                                children: [
+                                  Container(
+                                    width: 28, height: 28,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white12,
+                                      borderRadius: BorderRadius.circular(14),
+                                    ),
+                                    child: const Icon(Icons.person, size: 16, color: Colors.white54),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          p.username,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Color(0xFF66C0F4),
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                        Text(
+                                          '${p.createdAt.day}/${p.createdAt.month}/${p.createdAt.year}',
+                                          style: const TextStyle(fontSize: 10, color: Colors.white38),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      const Icon(Icons.thumb_up_outlined, size: 14, color: Colors.white38),
+                                      const SizedBox(width: 4),
+                                      const Text('0', style: TextStyle(fontSize: 11, color: Colors.white38)),
+                                      const SizedBox(width: 12),
+                                      const Icon(Icons.mode_comment_outlined, size: 14, color: Colors.white38),
+                                      const SizedBox(width: 4),
+                                      const Text('0', style: TextStyle(fontSize: 11, color: Colors.white38)),
+                                    ],
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                          const SizedBox(height: 8),
-                          Text(
-                            p.content,
-                            style: const TextStyle(color: Colors.white),
-                          ),
-                          if (p.imageUrl != null && p.imageUrl!.isNotEmpty) ...[
-                            const SizedBox(height: 8),
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(4),
-                              child: Image.network(
-                                p.imageUrl!,
-                                fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) => const SizedBox.shrink(),
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   );
                 },
