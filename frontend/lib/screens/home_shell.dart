@@ -46,84 +46,106 @@ class _HomeShellState extends State<HomeShell> {
 
     return Scaffold(
       appBar: AppBar(
+        elevation: 0,
+        backgroundColor: const Color(0xFF171A21),
         title: Row(
           children: [
-            Text(
-              'STEAMCLON',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: cs.primary,
-                letterSpacing: 1.2,
-              ),
+            // Logo
+            Row(
+              children: [
+                Icon(Icons.videogame_asset, color: cs.primary, size: 20),
+                const SizedBox(width: 8),
+                Text(
+                  'STEAMCLON',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: cs.primary,
+                    letterSpacing: 1.5,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(width: 20),
+            const SizedBox(width: 4),
+            Container(width: 1, height: 20, color: Colors.white12),
+            const SizedBox(width: 4),
+            // Nav items
             _navItem('TIENDA', 0),
             _navItem('BIBLIOTECA', 1),
             _navItem('COMUNIDAD', 2),
-            if (auth.userRole == 'ADMIN') _navItem('ADMIN', 3),
+            if (auth.userRole == 'ADMIN') ...[
+              Container(width: 1, height: 20, color: Colors.white12),
+              const SizedBox(width: 4),
+              _navItem('ADMIN', 3),
+            ],
           ],
         ),
         actions: [
           if (auth.isLoggedIn) ...[
-            Center(
-              child: Text(
-                auth.username ?? '',
-                style: const TextStyle(color: Colors.white70, fontSize: 12),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.white.withAlpha(15),
+                borderRadius: BorderRadius.circular(4),
+                border: Border.all(color: Colors.white12),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.person_outline, size: 14, color: Colors.white54),
+                  const SizedBox(width: 6),
+                  Text(
+                    auth.username ?? '',
+                    style: const TextStyle(color: Colors.white70, fontSize: 12),
+                  ),
+                ],
               ),
             ),
+            const SizedBox(width: 8),
             IconButton(
+              tooltip: 'Cerrar sesión',
               onPressed: () async => auth.logout(),
-              icon: const Icon(Icons.logout, size: 18, color: Colors.white54),
+              icon: const Icon(Icons.logout, size: 18, color: Colors.white38),
             ),
           ] else
-            TextButton(
+            TextButton.icon(
               onPressed: () {
                 Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => const LoginScreen(),
-                  ),
+                  MaterialPageRoute(builder: (_) => const LoginScreen()),
                 );
               },
-              child: const Text(
-                'INICIAR SESIÓN',
-                style: TextStyle(fontSize: 12),
-              ),
+              icon: const Icon(Icons.login, size: 16),
+              label: const Text('INICIAR SESIÓN', style: TextStyle(fontSize: 12)),
             ),
-
           Stack(
             alignment: Alignment.center,
             children: [
               IconButton(
+                tooltip: 'Carrito',
                 onPressed: () {
-                  Navigator.of(
-                    context,
-                  ).push(MaterialPageRoute(builder: (_) => const CartScreen()));
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const CartScreen()),
+                  );
                 },
-                icon: const Icon(
-                  Icons.shopping_cart_outlined,
-                  color: Colors.white70,
-                ),
+                icon: const Icon(Icons.shopping_cart_outlined, color: Colors.white70),
               ),
               if (cart.count > 0)
                 Positioned(
-                  right: 8,
-                  top: 8,
+                  right: 6,
+                  top: 6,
                   child: Container(
-                    padding: const EdgeInsets.all(2),
+                    padding: const EdgeInsets.all(3),
                     decoration: BoxDecoration(
-                      color: cs.surface,
-                      borderRadius: BorderRadius.circular(4),
-                      border: Border.all(color: Colors.white24),
+                      color: cs.primary,
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    constraints: const BoxConstraints(
-                      minWidth: 14,
-                      minHeight: 14,
-                    ),
+                    constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
                     child: Text(
                       cart.count.toString(),
                       style: const TextStyle(
-                        fontSize: 8,
+                        fontSize: 9,
                         fontWeight: FontWeight.bold,
+                        color: Colors.black,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -140,17 +162,26 @@ class _HomeShellState extends State<HomeShell> {
 
   Widget _navItem(String label, int index) {
     bool selected = _index == index;
-    return TextButton(
-      onPressed: () => setState(() => _index = index),
-      style: TextButton.styleFrom(
-        foregroundColor: selected ? Colors.white : Colors.grey,
-        backgroundColor: selected ? Colors.white.withAlpha(26) : null,
-        shape: const RoundedRectangleBorder(),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          fontWeight: selected ? FontWeight.bold : FontWeight.normal,
+    return InkWell(
+      onTap: () => setState(() => _index = index),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(
+              color: selected ? Theme.of(context).colorScheme.primary : Colors.transparent,
+              width: 2,
+            ),
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: selected ? FontWeight.bold : FontWeight.w500,
+            color: selected ? Colors.white : Colors.white54,
+            letterSpacing: 0.5,
+          ),
         ),
       ),
     );
